@@ -70,7 +70,8 @@ class Password extends StatelessWidget {
       body: SingleChildScrollView(
         child: SafeArea(child: Column(
           children: [
-            Image(image: AssetImage('images/Zao.png')),
+            Image(image: AssetImage('images/logo.png'),height: 100,),
+            SizedBox(height: 30,),
             Text('Create a new password',style: TextStyle(
               color: Colors.white,fontSize: 20,
             ),),

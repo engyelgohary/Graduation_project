@@ -61,13 +61,14 @@ class Setup extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+          
         ),
-      ),
+      ),),
       body: SingleChildScrollView(
         child: SafeArea(child: 
         Column(children: [
-           Image(image: AssetImage('images/Zao.png')),
+           Image(image: AssetImage('images/logo.png'),height: 100,),
+           SizedBox(height: 30,),
             Text('Setup your Profile',style: TextStyle(
               color: Colors.white,fontSize: 20,
             ),),
@@ -99,7 +100,7 @@ class Setup extends StatelessWidget {
                     textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.name,
                 decoration: InputDecoration(
-                  labelText: "First name",
+                  labelText: "Last name",
                   labelStyle: TextStyle(fontSize: 15, color: Colors.white),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
@@ -109,7 +110,7 @@ class Setup extends StatelessWidget {
                SizedBox(
                   height: 15,
                  ),
-                 ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/Setup');},
+                 ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/profile details');},
                  style: ButtonStyle (
                   minimumSize: MaterialStateProperty.all(Size(380, 40)),
                   backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
