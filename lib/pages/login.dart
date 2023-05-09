@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class Login extends StatelessWidget {
@@ -48,7 +50,7 @@ class Login extends StatelessWidget {
                SizedBox(
                 height: 15,
                ),
-               ElevatedButton(onPressed: (){},
+               ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/verification code');},
                style: ButtonStyle (
                 minimumSize: MaterialStateProperty.all(Size(380, 40)),
                 backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
