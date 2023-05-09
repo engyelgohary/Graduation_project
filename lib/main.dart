@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/pages/Login.dart';
 import 'package:untitled1/pages/VerificationCode.dart';
+import 'package:untitled1/pages/password.dart';
 
 
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
   routes: {
     '/Login': (context) => const Login(),
     '/verification code': (context) => const Code(),
+    '/password': (context) => const Password(),
 
   });
   }
