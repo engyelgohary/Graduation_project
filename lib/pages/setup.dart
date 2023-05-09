@@ -1,14 +1,11 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
-
-class Password extends StatelessWidget {
-  const Password({super.key});
+class Setup extends StatelessWidget {
+  const Setup({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor:Colors.black,
         flexibleSpace: SafeArea(
@@ -19,7 +16,7 @@ class Password extends StatelessWidget {
               children: [
                 Icon(
                   Icons.circle,
-                  color: Color(0xff45B39D),
+                  color:Colors.grey,
                   size: 10,
                 ),
                 SizedBox(
@@ -27,7 +24,7 @@ class Password extends StatelessWidget {
                 ),
                 Icon(
                   Icons.circle,
-                  color: Colors.grey,
+                  color: Color(0xff45B39D),
                   size: 10,
                 ),
                 SizedBox(
@@ -68,16 +65,16 @@ class Password extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: SafeArea(child: Column(
-          children: [
-            Image(image: AssetImage('images/Zao.png')),
-            Text('Create a new password',style: TextStyle(
+        child: SafeArea(child: 
+        Column(children: [
+           Image(image: AssetImage('images/Zao.png')),
+            Text('Setup your Profile',style: TextStyle(
               color: Colors.white,fontSize: 20,
             ),),
             SizedBox(
               height: 50,
             ),
-            Container(
+          Container(
                padding: EdgeInsets.all(10),
             margin: EdgeInsets.all(10),
            decoration: BoxDecoration(
@@ -88,30 +85,22 @@ class Password extends StatelessWidget {
               child: Column(
                 children: [
                   TextField(
-                    obscureText: true,
                     textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.visiblePassword,
+                keyboardType: TextInputType.name,
                 decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "First name",
                   labelStyle: TextStyle(fontSize: 15, color: Colors.white),
-                   suffixIcon: Icon(Icons.visibility,color: Color(0xff45B39D),size: 20,),
-                  prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
-                  
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
                 )
                 ),
                ),
-               TextField(
-                
-               
-                keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.done,
+              TextField(
+                    textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.name,
                 decoration: InputDecoration(
-                  labelText: "Password confirmation",
-                  suffixIcon: Icon(Icons.visibility,color: Color(0xff45B39D),size: 20,),
+                  labelText: "First name",
                   labelStyle: TextStyle(fontSize: 15, color: Colors.white),
-                  prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
                 )
@@ -134,10 +123,10 @@ class Password extends StatelessWidget {
                   height: 15,
                  )
                 ]),)
-          ],
-        )),
-      ),
+        ],)
+        ),
 
+      ),
     );
   }
 }
