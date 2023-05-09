@@ -8,7 +8,7 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-   backgroundColor: Color(0xff424949),
+   backgroundColor: Colors.black,
       body: SafeArea(
         child: Center(
           child: Column(
@@ -31,7 +31,7 @@ class Login extends StatelessWidget {
             margin: EdgeInsets.all(10),
            decoration: BoxDecoration(
              borderRadius: BorderRadius.circular(15),
-             color:Color(0xffBDC3C7),
+             color:Color.fromARGB(255, 48, 50, 51),
            ),
            child: Column(
              children: [
