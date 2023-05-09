@@ -176,7 +176,7 @@ class Code extends StatelessWidget {
               Text('   Resend',style: TextStyle(
                 color:Color(0xff45B39D),
               ) ,)
-            ],
+            ], 
           ),
           ],
         ),
