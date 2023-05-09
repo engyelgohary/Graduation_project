@@ -89,11 +89,14 @@ class Password extends StatelessWidget {
                 children: [
                   TextField(
                     obscureText: true,
+                    textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
                   labelText: "Password",
                   labelStyle: TextStyle(fontSize: 15, color: Colors.white),
+                   suffixIcon: Icon(Icons.visibility,color: Color(0xff45B39D),size: 20,),
                   prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
+                  
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
                 )
@@ -101,12 +104,12 @@ class Password extends StatelessWidget {
                ),
                TextField(
                 
-                obscureText: true,
+               
                 keyboardType: TextInputType.visiblePassword,
                 textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
                   labelText: "Password confirmation",
-                  suffixIcon: Icon(Icons.visibility),
+                  suffixIcon: Icon(Icons.visibility,color: Color(0xff45B39D),size: 20,),
                   labelStyle: TextStyle(fontSize: 15, color: Colors.white),
                   prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
                 focusedBorder: UnderlineInputBorder(
