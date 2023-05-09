@@ -20,7 +20,7 @@ class Login extends StatelessWidget {
            SizedBox(
             height: 20,
            ),
-           Text('Enter your email',style: TextStyle(
+           Text('Enter your email',style: TextStyle( 
             fontSize: 15,color: Colors.grey,
            ),),
            SizedBox(
