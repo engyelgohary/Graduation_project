@@ -21,7 +21,7 @@ class Password extends StatelessWidget {
                   Icons.circle,
                   color: Color(0xff45B39D),
                   size: 10,
-                ),
+                ), 
                 SizedBox(
                   width: 10,
                 ),
