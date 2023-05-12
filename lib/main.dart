@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:untitled1/pages/Login.dart';
 import 'package:untitled1/pages/VerificationCode.dart';
 import 'package:untitled1/pages/enterpassword.dart';
+import 'package:untitled1/pages/forgetpass.dart';
 import 'package:untitled1/pages/profiledetials.dart';
 import 'package:untitled1/pages/setpassword.dart';
 import 'package:untitled1/pages/setup.dart';
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
   initialRoute: '/Login',
   routes: {
     '/Login': (context) => const Login(),
@@ -25,6 +27,7 @@ class MyApp extends StatelessWidget {
     '/Setup': (context) => const Setup(),
     '/profile details': (context) => const Profile(),
     '/enterpassword': (context) => const SetPass(),
+    '/forgetpass': (context) => const Forget(),
 
   });
   }

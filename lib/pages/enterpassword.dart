@@ -70,7 +70,7 @@ class SetPass extends StatelessWidget {
                  SizedBox(
                   height: 15,
                  ),
-                  ElevatedButton(onPressed: (){},
+                  ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/forgetpass');},
                  style: ButtonStyle (
                   minimumSize: MaterialStateProperty.all(Size(380, 40)),
                   backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 48, 50, 51),),
