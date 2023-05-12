@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
+
+
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
@@ -90,6 +94,9 @@ class _ProfileState extends State<Profile> {
                     color: Colors.grey,fontSize: 15,
                   ),),
                 ),
+                SizedBox(
+                  height: 20,
+                ),
                 Container(
                       padding: EdgeInsets.all(10),
                           margin: EdgeInsets.all(10),
@@ -106,7 +113,119 @@ class _ProfileState extends State<Profile> {
                         SizedBox(
                           height: 10,
                        ),
-                      imageprofile()
+                      imageprofile(),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Container
+                        (alignment: Alignment.topLeft,
+                          child: Text('Measurements system',style: TextStyle(fontSize:18, color: Colors.white),)),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [   
+                          Text('Squat 1RM',style: TextStyle(fontSize:14, color: Colors.white),),
+                             Text('Branch 1RM',style: TextStyle(fontSize:14, color: Colors.white),),
+                            Container(
+                            padding: EdgeInsets.only(right:10,),
+                            child: Text('Deadlift 1RM',style: TextStyle(fontSize:14, color: Colors.white),),
+                          ),
+                          ],
+                  ),
+                      Row (
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                           SizedBox(
+                            height: 60,
+                            width: 100,
+                            child: TextField(
+                      textInputAction: TextInputAction.next,
+                              
+                              style: Theme.of(context).textTheme.headline6,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color:Colors.grey),
+                                ),
+                              ),
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(3),
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                           SizedBox(
+                            height: 60,
+                            width: 100,
+                            child: TextField(
+                      textInputAction: TextInputAction.next,
+                              
+                              style: Theme.of(context).textTheme.headline6,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color:Colors.grey),
+                                ),
+                              ),
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(3),
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                          
+                          SizedBox(
+                            height: 60,
+                            width: 100,
+                            child: TextField(
+                      textInputAction: TextInputAction.done,
+                              
+                              style: Theme.of(context).textTheme.headline6,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color:Colors.grey),
+                                
+                                ),
+                              ),
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(3),
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                  height: 15,
+                 ),
+                  Container
+                        (alignment: Alignment.center,
+                          child: Text('*1RM = 1 repetition maximum',style: TextStyle(fontSize:15, color: Colors.grey),)),
+                      
+
+
+SizedBox(
+                  height: 20,
+                 ),
+                 ElevatedButton(onPressed: (){},
+                 style: ButtonStyle (
+                  minimumSize: MaterialStateProperty.all(Size(380, 40)),
+                  backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
+                  padding: MaterialStateProperty.all(EdgeInsets.all(10)),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(10))),
+                 ),
+                 child:Text("Start Training", style: TextStyle(fontSize: 15),),
+                 ),
+     
+                 SizedBox(
+                  height: 15,
+                 )
                     ],
                   ),
                 ) 
@@ -130,10 +249,6 @@ class _ProfileState extends State<Profile> {
                          ),
                          Positioned(bottom:10,right: 6,
                           child: InkWell( onTap: () {
-                            showModalBottomSheet(
-                             context: BuildContext as BuildContext,
-                               builder: ((builder) => bottomsheet()), 
-                            );
                           }, 
                           
                             child: Icon(Icons.camera_alt,color: Colors.black,size: 28,)))
@@ -141,30 +256,4 @@ class _ProfileState extends State<Profile> {
                         ),
   );
  }
-   Widget bottomsheet() {
-    return Container(
-width: MediaQuery.of(BuildContext as BuildContext).size.width,
-margin: EdgeInsets.symmetric(
-  horizontal: 20,
-  vertical: 20,
-),
-child: Column(children: <Widget>[
-  Text(
-            "Choose Profile photo",
-            style: TextStyle(
-              fontSize: 20.0,
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: <Widget>[
-            TextButton.icon(onPressed: (){}, icon: Icon(Icons.camera), label: Text('Camera')),
-            TextButton.icon(onPressed: (){}, icon: Icon(Icons.camera), label: Text('Gallery'))
 
-            ],
-          )
-]),
-    );
-   }
