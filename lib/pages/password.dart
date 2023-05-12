@@ -38,30 +38,7 @@ class Password extends StatelessWidget {
                   color: Colors.grey,
                   size: 10,
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Icon(
-                  Icons.circle,
-                  color: Colors.grey,
-                  size: 10,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Icon(
-                  Icons.circle,
-                  color: Colors.grey,
-                  size: 10,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Icon(
-                  Icons.circle,
-                  color: Colors.grey,
-                  size: 10,
-                ),
+              
               ],
             ),
           ),

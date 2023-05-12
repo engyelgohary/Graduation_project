@@ -46,30 +46,7 @@ class _ProfileState extends State<Profile> {
                  color: Color(0xff45B39D),
                   size: 10,
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Icon(
-                  Icons.circle,
-                  color: Colors.grey,
-                  size: 10,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Icon(
-                  Icons.circle,
-                  color: Colors.grey,
-                  size: 10,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Icon(
-                  Icons.circle,
-                  color: Colors.grey,
-                  size: 10,
-                ),
+                
               ],
             ),
         ),
