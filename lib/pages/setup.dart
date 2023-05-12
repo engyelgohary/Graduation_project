@@ -35,8 +35,6 @@ class Setup extends StatelessWidget {
                   color: Colors.grey,
                   size: 10,
                 ),
-              
-              
               ],
             ),
           

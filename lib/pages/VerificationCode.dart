@@ -148,7 +148,7 @@ class Code extends StatelessWidget {
                    SizedBox(
                   height: 15,
                  ),
-                 ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/password');},
+                 ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/setpassword');},
                  style: ButtonStyle (
                   minimumSize: MaterialStateProperty.all(Size(380, 40)),
                   backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
