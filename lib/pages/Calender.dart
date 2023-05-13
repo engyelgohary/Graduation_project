@@ -5,6 +5,8 @@ class Calender extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: SafeArea(child: Text("yeees u do it",style: TextStyle(color: Colors.black),) ),
+    );
   }
 }

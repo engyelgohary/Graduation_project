@@ -1,12 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:untitled1/pages/Calender.dart';
 import 'package:untitled1/pages/Login.dart';
 import 'package:untitled1/pages/VerificationCode.dart';
-import 'package:untitled1/pages/enterpassword.dart';
 import 'package:untitled1/pages/forgetpass.dart';
 import 'package:untitled1/pages/profiledetials.dart';
 import 'package:untitled1/pages/setpassword.dart';
 import 'package:untitled1/pages/setup.dart';
+import 'package:untitled1/pages/signup.dart';
+
+
+
 
 
 
@@ -30,9 +34,12 @@ class MyApp extends StatelessWidget {
     '/setpassword': (context) => const Password(),
     '/Setup': (context) => const Setup(),
     '/profile details': (context) => const Profile(),
-    '/enterpassword': (context) => const SetPass(),
     '/forgetpass': (context) => const Forget(),
+    '/calender': (context) => const Calender(),
+    '/signup': (context) => const Signup(),
+  },
 
-  });
+        
+  );
   }
 }

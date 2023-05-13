@@ -23,7 +23,7 @@ class Forget extends StatelessWidget {
                ),
            Container(
              padding: EdgeInsets.all(20,),
-             child: ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/enterpassword');},
+             child: ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/Login');},
                  style: ButtonStyle (
                   minimumSize: MaterialStateProperty.all(Size(380, 40)),
                   backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),

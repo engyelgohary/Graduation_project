@@ -2,10 +2,23 @@
 
 import 'package:flutter/material.dart';
 
-class Password extends StatelessWidget {
+class Password extends StatefulWidget {
   const Password({super.key});
 
   @override
+  State<Password> createState() => _PasswordState();
+}
+
+class _PasswordState extends State<Password> {
+   var _isObscured;
+   
+  @override
+   void initState() {
+    super.initState();
+    _isObscured = true;
+    
+  }
+ 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -65,35 +78,53 @@ class Password extends StatelessWidget {
            ),
               child: Column(
                 children: [
-                  TextField(
-                    obscureText: true,
-                    textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  labelStyle: TextStyle(fontSize: 15, color: Colors.white),
-                   suffixIcon: Icon(Icons.visibility,color: Color(0xff45B39D),size: 20,),
-                  prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
+                  Form(
+                    child: TextField(
+                     obscureText: _isObscured,
+                      textInputAction: TextInputAction.next,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  decoration: InputDecoration(
+                    labelText: "Password",
+                    labelStyle: TextStyle(fontSize: 15, color: Colors.white),
+                                   suffixIcon: IconButton(
+                          icon: _isObscured ? const Icon(Icons.visibility,color:Color(0xff45B39D)) : const Icon(Icons.visibility_off,color:Color(0xff45B39D)),
+                          onPressed: (){
+                            setState(() {
+                              _isObscured =!_isObscured;
+                            });
+                          }, 
+                         ),
+                    prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
+                    
+                                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
+                                  )
+                                  ),
+                                 ),
+                  ),
+               Form(
+                 child: TextField(
                   
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
-                )
-                ),
-               ),
-               TextField(
-                
-               
-                keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  labelText: "Password confirmation",
-                  suffixIcon: Icon(Icons.visibility,color: Color(0xff45B39D),size: 20,),
-                  labelStyle: TextStyle(fontSize: 15, color: Colors.white),
-                  prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
-                )
-                ),
+                 obscureText: _isObscured,
+                  keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: "Password confirmation",
+                     suffixIcon: IconButton(
+                        icon: _isObscured ? const Icon(Icons.visibility,color:Color(0xff45B39D)) : const Icon(Icons.visibility_off,color:Color(0xff45B39D)),
+                        onPressed: (){
+                          setState(() {
+                            _isObscured =!_isObscured;
+                          });
+                        }, 
+                       ),
+                    labelStyle: TextStyle(fontSize: 15, color: Colors.white),
+                    prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
+                  )
+                  ),
+                 ),
                ),
                SizedBox(
                   height: 15,
