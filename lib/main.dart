@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:untitled1/pages/Login.dart';
-import 'package:untitled1/pages/VerificationCode.dart';
-import 'package:untitled1/pages/forgetpass.dart';
+import 'package:untitled1/pages/SignUp/VerificationCode.dart';
+import 'package:untitled1/pages/login/forgetpass.dart';
 import 'package:untitled1/pages/nav_pages/main_page.dart';
-import 'package:untitled1/pages/profiledetials.dart';
-import 'package:untitled1/pages/setpassword.dart';
-import 'package:untitled1/pages/setup.dart';
-import 'package:untitled1/pages/signup.dart';
+import 'package:untitled1/pages/SignUp/profiledetials.dart';
+import 'package:untitled1/pages/SignUp/setpassword.dart';
+import 'package:untitled1/pages/SignUp/setup.dart';
+import 'package:untitled1/pages/SignUp/signup.dart';
 
 
 
