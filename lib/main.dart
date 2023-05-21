@@ -1,13 +1,18 @@
 
 import 'package:flutter/material.dart';
-import 'package:untitled1/pages/Login.dart';
 import 'package:untitled1/pages/SignUp/VerificationCode.dart';
 import 'package:untitled1/pages/login/forgetpass.dart';
+import 'package:untitled1/pages/login/login.dart';
 import 'package:untitled1/pages/nav_pages/main_page.dart';
 import 'package:untitled1/pages/SignUp/profiledetials.dart';
 import 'package:untitled1/pages/SignUp/setpassword.dart';
 import 'package:untitled1/pages/SignUp/setup.dart';
 import 'package:untitled1/pages/SignUp/signup.dart';
+import 'package:untitled1/pages/nav_pages/reportsbuttons/RPE.dart';
+import 'package:untitled1/pages/nav_pages/reportsbuttons/bodymeasurements.dart';
+import 'package:untitled1/pages/nav_pages/reportsbuttons/bodyweight.dart';
+import 'package:untitled1/pages/nav_pages/reportsbuttons/progressphoto.dart';
+import 'package:untitled1/pages/nav_pages/reportsbuttons/stepcount.dart';
 
 
 
@@ -36,7 +41,14 @@ class MyApp extends StatelessWidget {
     '/profile details': (context) => const Profile(),
     '/forgetpass': (context) => const Forget(),
     '/signup': (context) => const Signup(),
-    '/main_page': (context) => const MainPage(),       
+    '/main_page': (context) => const MainPage(), 
+    '/PRE': (context) => const PRE(), 
+     '/bodyweight': (context) => const BodyWeight(), 
+      '/stepcount': (context) => const StepCount(), 
+       '/bodymeasurements': (context) => const BodyM(),
+        'progressPhoto': (context) => const ProgressPhoto(),  
+
+          
   },
       
 

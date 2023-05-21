@@ -40,7 +40,9 @@ class _ReportsState extends State<Reports> {
                    padding: EdgeInsets.all(15),
                    alignment: Alignment.centerLeft
                 ),
-                onPressed: (){},
+                onPressed: (){
+                  Navigator.pushNamed(context, '/PRE');
+                },
                  icon: Icon(Icons.insert_chart_outlined_outlined,color: Colors.white,size: 25,),
                  label: Text('Session RPE' , style: TextStyle(fontSize: 15,),),
                  ),
@@ -54,7 +56,9 @@ class _ReportsState extends State<Reports> {
                    padding: EdgeInsets.all(15),
                    alignment: Alignment.centerLeft
                 ),
-                onPressed: (){},
+                onPressed: (){
+                  Navigator.pushNamed(context, '/bodyweight');
+                },
                  icon: Icon(Icons.monitor_weight_outlined,color: Colors.white,size: 25,),
                  label: Text('BodyWeight' , style: TextStyle(fontSize: 15,),),
                  ),
@@ -68,7 +72,9 @@ class _ReportsState extends State<Reports> {
                    padding: EdgeInsets.all(15),
                    alignment: Alignment.centerLeft
                 ),
-                onPressed: (){},
+                onPressed: (){
+                   Navigator.pushNamed(context, '/stepcount');
+                },
                  icon: Icon(Icons.directions_walk_rounded,color: Colors.white,size: 25,),
                  label: Text('Step Count' , style: TextStyle(fontSize: 15,),),
                  ),
@@ -82,7 +88,9 @@ class _ReportsState extends State<Reports> {
                    padding: EdgeInsets.all(15),
                    alignment: Alignment.centerLeft
                 ),
-                onPressed: (){},
+                onPressed: (){
+                  Navigator.pushNamed(context, '/bodymeasurements');
+                },
                  icon: Icon(Icons.boy_rounded,color: Colors.white,size: 25,),
                  label: Text('Body Measurements' , style: TextStyle(fontSize: 15,),),
                  ),
@@ -96,7 +104,9 @@ class _ReportsState extends State<Reports> {
                    padding: EdgeInsets.all(15),
                    alignment: Alignment.centerLeft
                 ),
-                onPressed: (){},
+                onPressed: (){
+                  Navigator.pushNamed(context, 'progressPhoto');
+                },
                  icon: Icon(Icons.add_a_photo_outlined,color: Colors.white,size: 25,),
                  label: Text('Progress Photos' , style: TextStyle(fontSize: 15,),),
                  ),

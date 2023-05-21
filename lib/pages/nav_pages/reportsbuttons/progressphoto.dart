@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PRE extends StatelessWidget {
-  const PRE({super.key});
+class ProgressPhoto extends StatelessWidget {
+  const ProgressPhoto({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class PRE extends StatelessWidget {
            ),
         )
         ),
-          title: Text('Session RPE',style: TextStyle(fontSize:16 ,),),
+          title: Text('Photo History',style: TextStyle(fontSize:16 ,),),
           titleSpacing: -13,
       ),
       

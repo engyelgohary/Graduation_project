@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class PRE extends StatelessWidget {
-  const PRE({super.key});
+class BodyWeight extends StatelessWidget {
+  const BodyWeight({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor:Colors.black,
+      backgroundColor:Colors.black,
       appBar: AppBar(
         backgroundColor:Colors.black,
         flexibleSpace: SafeArea(
@@ -21,10 +21,9 @@ class PRE extends StatelessWidget {
            ),
         )
         ),
-          title: Text('Session RPE',style: TextStyle(fontSize:16 ,),),
+          title: Text('BodyWeight',style: TextStyle(fontSize:16 ,),),
           titleSpacing: -13,
       ),
-      
     );
   }
 }

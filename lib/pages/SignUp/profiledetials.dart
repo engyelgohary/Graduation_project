@@ -190,7 +190,9 @@ class _ProfileState extends State<Profile> {
 SizedBox(
                   height: 20,
                  ),
-                 ElevatedButton(onPressed: (){},
+                 ElevatedButton(onPressed: (){
+                   Navigator.pushNamed(context, '/main_page');
+                 },
                  style: ButtonStyle (
                   minimumSize: MaterialStateProperty.all(Size(380, 40)),
                   backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
