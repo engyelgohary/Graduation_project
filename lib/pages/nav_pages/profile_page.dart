@@ -7,7 +7,7 @@ class Profile_page extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-        child: Text('Profile page'),
+        child: Text('Profile page',style: TextStyle(fontSize: 50,color: Colors.white),)
       ),
     );
   }

@@ -10,6 +10,11 @@ class Calender_page extends StatefulWidget {
 class _Calender_pageState extends State<Calender_page> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Container(
+      child: Center(
+        child: Text('calender page',style: TextStyle(fontSize: 50,color: Colors.white),),
+      ),
+
+    );
   }
 }

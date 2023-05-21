@@ -1,9 +1,9 @@
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
-import 'package:untitled1/pages/Calender.dart';
 import 'package:untitled1/pages/Login.dart';
 import 'package:untitled1/pages/VerificationCode.dart';
 import 'package:untitled1/pages/forgetpass.dart';
+import 'package:untitled1/pages/nav_pages/main_page.dart';
 import 'package:untitled1/pages/profiledetials.dart';
 import 'package:untitled1/pages/setpassword.dart';
 import 'package:untitled1/pages/setup.dart';
@@ -16,7 +16,7 @@ import 'package:untitled1/pages/signup.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+ 
 
   runApp(const MyApp());
 }
@@ -36,8 +36,9 @@ class MyApp extends StatelessWidget {
     '/profile details': (context) => const Profile(),
     '/forgetpass': (context) => const Forget(),
     '/signup': (context) => const Signup(),
-    '/calender': (context) =>  const Pages(),
+    '/main_page': (context) => const MainPage(),       
   },
+      
 
         
   );

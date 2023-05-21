@@ -97,7 +97,9 @@ class _LoginState extends State<Login> {
                ),
 
 
-               ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/calender');},
+               ElevatedButton(onPressed: () {
+                Navigator.pushNamed(context, '/main_page');
+                },
                  style: ButtonStyle (
                    minimumSize: MaterialStateProperty.all(Size(380, 40)),
                    backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),

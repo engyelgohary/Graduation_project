@@ -4,25 +4,44 @@ import 'package:untitled1/pages/nav_pages/profile_page.dart';
 import 'package:untitled1/pages/nav_pages/programs_page.dart';
 import 'package:untitled1/pages/nav_pages/reports_page.dart';
 
-class _MainPage extends StatefulWidget {
-  const _MainPage({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<_MainPage> createState() => _MainPageState();
+  State<MainPage> createState() => MainPageState();
 }
 
-class _MainPageState extends State<_MainPage> {
+class MainPageState extends State<MainPage> {
   List pages = [
     Calender_page(),
     Programs_page(),
     Reports_page(),
     Profile_page(),
   ];
+  int currentIndex=0;
+  void onTap (int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[0],
+      backgroundColor: Colors.black,
+      body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        unselectedFontSize: 0,
+        selectedFontSize: 0,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.black,
+        onTap: onTap,
+        currentIndex: currentIndex,
+        selectedItemColor: Color(0xff45B39D),
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: false,
+        showSelectedLabels: false,
+        elevation: 0,
+
         items: [
           BottomNavigationBarItem(
             label: 'Calender',
