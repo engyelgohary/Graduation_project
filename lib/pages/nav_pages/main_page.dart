@@ -27,7 +27,7 @@ class MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor:Colors.black,
       body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         unselectedFontSize: 0,
