@@ -5,10 +5,21 @@ class Programs_page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('program page',style: TextStyle(fontSize: 50,color: Colors.white),),
-      ),
+    return Scaffold(
+          appBar: AppBar( 
+              toolbarHeight: 80,
+               backgroundColor:Colors.black,
+            automaticallyImplyLeading: false,
+            title: Text('My Programs'),
+            actions: [
+              IconButton(onPressed: (){}, 
+              icon: Icon(Icons.notifications)
+              ),
+              IconButton(onPressed: (){}, 
+              icon:Icon(Icons.message) )
+            ],
+        ),
+       
     );
   }
 }

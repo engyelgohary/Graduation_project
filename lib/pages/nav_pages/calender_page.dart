@@ -10,11 +10,21 @@ class Calender_page extends StatefulWidget {
 class _Calender_pageState extends State<Calender_page> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('calender page',style: TextStyle(fontSize: 50,color: Colors.white),),
-      ),
-
+    return Scaffold(
+          appBar: AppBar( 
+              toolbarHeight: 80,
+               backgroundColor:Colors.black,
+            automaticallyImplyLeading: false,
+            title: Text('Calender'),
+            actions: [
+              IconButton(onPressed: (){}, 
+              icon: Icon(Icons.notifications)
+              ),
+              IconButton(onPressed: (){}, 
+              icon:Icon(Icons.message) )
+            ],
+        ),
+       
     );
   }
 }

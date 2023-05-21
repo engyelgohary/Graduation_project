@@ -15,7 +15,7 @@ class MainPageState extends State<MainPage> {
   List pages = [
     Calender_page(),
     Programs_page(),
-    Reports_page(),
+    Reports(),
     Profile_page(),
   ];
   int currentIndex=0;
