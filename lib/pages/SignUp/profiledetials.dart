@@ -1,10 +1,13 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructor
 
 
-
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
@@ -13,7 +16,94 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  File?pickedImage;
+void imagePickerOption() {
+    Get.bottomSheet(
+      SingleChildScrollView(
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(10.0),
+            topRight: Radius.circular(10.0),
+          ),
+          child: Container(
+            color: Color.fromARGB(255, 48, 50, 51),
+            height: 150,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 10,),
+                    child: const Text(
+                      "Select Image From",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 40,),
+                        child: ElevatedButton.icon(
+                          style: ButtonStyle(
+                             backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
+                          ),
+                          onPressed: () {
+                          pickImage(ImageSource.camera);
+                          },
+                          icon: const Icon(Icons.camera),
+                          label: const Text("CAMERA"),
+                          
+                        ),
+                      ),
+                  ElevatedButton.icon(
+                      style: ButtonStyle(
+                             backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
+                          ),
+                    onPressed: () {
+                    pickImage(ImageSource.gallery);
+                    },
+                    icon: const Icon(Icons.image),
+                    label: const Text("GALLERY"),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  pickImage(ImageSource imageType) async {
+    try {
+      final photo = await ImagePicker().pickImage(source: imageType);
+      if (photo == null) return;
+      final tempImage = File(photo.path);
+      setState(() {
+        pickedImage = tempImage;
+      });
+
+      Get.back();
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
+
+
   @override
+  
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -90,7 +180,24 @@ class _ProfileState extends State<Profile> {
                         SizedBox(
                           height: 10,
                        ),
-                      imageprofile(),
+                      Center(
+                        child: Stack(
+                          children:<Widget> [
+                         ClipOval(
+                           child:pickedImage !=null ? Image.file(pickedImage !,width: 100,height: 100,fit:BoxFit.cover,):
+                            CircleAvatar(
+                            backgroundColor: Colors.grey,
+                             radius: 50.0,
+                             backgroundImage: AssetImage('images/Profile.png',)
+                           ),
+                         ),
+                         Positioned(bottom:-9,right: -3,
+                          child: IconButton(onPressed:imagePickerOption,
+                           icon: Icon(Icons.camera_alt,color: Colors.black,size: 25,)))
+                         ],
+
+                        ),
+                      ),
                       SizedBox(
                         height: 15,
                       ),
@@ -159,8 +266,7 @@ class _ProfileState extends State<Profile> {
                             height: 60,
                             width: 100,
                             child: TextField(
-                      textInputAction: TextInputAction.done,
-                              
+                      textInputAction: TextInputAction.done,        
                               style: Theme.of(context).textTheme.headline6,
                               keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
@@ -215,24 +321,5 @@ SizedBox(
     );
   }
 }
- Widget imageprofile() {
-  return             Center(
-    child: Stack(
-                          // ignore: prefer_const_literals_to_create_immutables
-                          children:<Widget> [
-  
-                         CircleAvatar(
-                          backgroundColor: Colors.grey,
-                           radius: 50.0,
-                           backgroundImage: AssetImage('images/Profile.png',)
-                         ),
-                         Positioned(bottom:10,right: 6,
-                          child: InkWell( onTap: () {
-                          }, 
-                          
-                            child: Icon(Icons.camera_alt,color: Colors.black,size: 28,)))
-                         ],
-                        ),
-  );
- }
+
 

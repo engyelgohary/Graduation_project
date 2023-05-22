@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:untitled1/pages/SignUp/VerificationCode.dart';
 import 'package:untitled1/pages/login/forgetpass.dart';
 import 'package:untitled1/pages/login/login.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
   initialRoute: '/Login',
   routes: {
