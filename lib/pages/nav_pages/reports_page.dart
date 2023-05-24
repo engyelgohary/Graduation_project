@@ -105,7 +105,7 @@ class _ReportsState extends State<Reports> {
                    alignment: Alignment.centerLeft
                 ),
                 onPressed: (){
-                  Navigator.pushNamed(context, 'progressPhoto');
+                  Navigator.pushNamed(context, '/progressPhoto');
                 },
                  icon: Icon(Icons.add_a_photo_outlined,color: Colors.white,size: 25,),
                  label: Text('Progress Photos' , style: TextStyle(fontSize: 15,),),

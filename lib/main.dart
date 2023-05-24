@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:untitled1/pages/SignUp/VerificationCode.dart';
 import 'package:untitled1/pages/login/forgetpass.dart';
 import 'package:untitled1/pages/login/login.dart';
+import 'package:untitled1/pages/nav_pages/Calenderbuttons/camera.dart';
 import 'package:untitled1/pages/nav_pages/main_page.dart';
 import 'package:untitled1/pages/SignUp/profiledetials.dart';
 import 'package:untitled1/pages/SignUp/setpassword.dart';
@@ -44,11 +45,12 @@ class MyApp extends StatelessWidget {
     '/signup': (context) => const Signup(),
     '/main_page': (context) => const MainPage(), 
     '/PRE': (context) => const PRE(), 
-     '/bodyweight': (context) => const BodyWeight(), 
-      '/stepcount': (context) => const StepCount(), 
-       '/bodymeasurements': (context) => const BodyM(),
-        'progressPhoto': (context) => const ProgressPhoto(),  
-
+    '/bodyweight': (context) => const BodyWeight(), 
+     '/stepcount': (context) => const StepCount(), 
+    '/bodymeasurements': (context) => const BodyM(),
+    '/progressPhoto': (context) => const ProgressPhoto(),  
+    '/Camera': (context) => const Camera(), 
+    
           
   },
       

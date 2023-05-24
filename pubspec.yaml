@@ -44,6 +44,7 @@ dependencies:
   flutter_clean_calendar: ^1.1.0
   image_picker: ^0.8.7+5
   get: ^4.6.5
+  table_calendar: ^3.0.8
 
 dev_dependencies:
   flutter_test:
