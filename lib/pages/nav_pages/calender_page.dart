@@ -134,10 +134,14 @@ class _Calender_pageState extends State<Calender_page> {
                       Navigator.pushNamed(context, '/Camera');
                     }
                     , icon: Icon(Icons.add_a_photo_outlined,color: Colors.white,size: 30,)),
-                     IconButton(onPressed: (){}
+                     IconButton(onPressed: (){
+                      Navigator.pushNamed(context, '/enter_weight');
+                     }
                     , icon: Icon(Icons.monitor_weight_outlined,color: Colors.white,size: 30,)),
-                     IconButton(onPressed: (){}
-                    , icon: Icon(Icons.restaurant,color: Colors.white,size: 30,))
+                     IconButton(onPressed: (){
+                       Navigator.pushNamed(context, '/enter_nutrition');
+                     }
+                    , icon: Icon(Icons.restaurant_menu_outlined,color: Colors.white,size: 30,))
                   ],
                 ),
               ),
@@ -149,7 +153,7 @@ class _Calender_pageState extends State<Calender_page> {
            ),
                 padding: EdgeInsets.all(5),
                 child: ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, '');
+                Navigator.pushNamed(context, '/excrsise');
                 },
                  style: ButtonStyle (
                    minimumSize: MaterialStateProperty.all(Size(380, 40)),

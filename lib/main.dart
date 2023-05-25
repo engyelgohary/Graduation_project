@@ -5,6 +5,9 @@ import 'package:untitled1/pages/SignUp/VerificationCode.dart';
 import 'package:untitled1/pages/login/forgetpass.dart';
 import 'package:untitled1/pages/login/login.dart';
 import 'package:untitled1/pages/nav_pages/Calenderbuttons/camera.dart';
+import 'package:untitled1/pages/nav_pages/Calenderbuttons/enternutrition.dart';
+import 'package:untitled1/pages/nav_pages/Calenderbuttons/enterweight.dart';
+import 'package:untitled1/pages/nav_pages/Calenderbuttons/excrsise_page.dart';
 import 'package:untitled1/pages/nav_pages/main_page.dart';
 import 'package:untitled1/pages/SignUp/profiledetials.dart';
 import 'package:untitled1/pages/SignUp/setpassword.dart';
@@ -13,6 +16,7 @@ import 'package:untitled1/pages/SignUp/signup.dart';
 import 'package:untitled1/pages/nav_pages/reportsbuttons/RPE.dart';
 import 'package:untitled1/pages/nav_pages/reportsbuttons/bodymeasurements.dart';
 import 'package:untitled1/pages/nav_pages/reportsbuttons/bodyweight.dart';
+import 'package:untitled1/pages/nav_pages/reportsbuttons/nutrition.dart';
 import 'package:untitled1/pages/nav_pages/reportsbuttons/progressphoto.dart';
 import 'package:untitled1/pages/nav_pages/reportsbuttons/stepcount.dart';
 
@@ -48,9 +52,12 @@ class MyApp extends StatelessWidget {
     '/bodyweight': (context) => const BodyWeight(), 
      '/stepcount': (context) => const StepCount(), 
     '/bodymeasurements': (context) => const BodyM(),
+    '/nutrition': (context) => const Nut(), 
     '/progressPhoto': (context) => const ProgressPhoto(),  
     '/Camera': (context) => const Camera(), 
-    
+    '/enter_weight': (context) => const Enter_Weight(), 
+    '/enter_nutrition': (context) => const Enter_Nut(), 
+    '/excrsise': (context) => const Add(), 
           
   },
       
