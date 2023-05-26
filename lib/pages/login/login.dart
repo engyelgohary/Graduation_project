@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 
 
 class Login extends StatefulWidget {
@@ -17,6 +19,9 @@ class _LoginState extends State<Login> {
     super.initState();
     _isObscured = true;
   }
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   Widget build(BuildContext context) {
     return Scaffold(
    backgroundColor: Colors.black,
@@ -51,7 +56,7 @@ class _LoginState extends State<Login> {
            child: Column(
              children: [
                TextField(
-
+                controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
@@ -66,10 +71,9 @@ class _LoginState extends State<Login> {
                SizedBox(
                 height: 5,
                ),
-                 Form(
-                   child: TextField(
+                 TextField(
                       obscureText: _isObscured,
-                    
+                      controller: passwordController,
                       textInputAction: TextInputAction.done,
                                  keyboardType: TextInputType.visiblePassword,
                                  decoration: InputDecoration(
@@ -90,16 +94,13 @@ class _LoginState extends State<Login> {
                                  )
                                  ),
                                 ),
-                 ),
                SizedBox(
                 height: 20,
 
                ),
 
 
-               ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, '/main_page');
-                },
+               ElevatedButton(onPressed: signIn,
                  style: ButtonStyle (
                    minimumSize: MaterialStateProperty.all(Size(380, 40)),
                    backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
@@ -147,8 +148,13 @@ class _LoginState extends State<Login> {
           ]),
           
           ),
-      ),
-      
+      ), 
     );
   }
+    Future signIn() async {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailController.text.trim(), 
+      password: passwordController.text.trim(),
+      );
+    }
 }
