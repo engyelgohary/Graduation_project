@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterdatabasesalah/pages/login/auth.dart';
 
 
 
@@ -14,13 +15,36 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   var _isObscured;
+
   @override
  void initState() {
     super.initState();
     _isObscured = true;
   }
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+   String? errorMessage ='';
+    bool isLogin = true;
+     final TextEditingController _emailController = TextEditingController();
+    final  TextEditingController _passwordController = TextEditingController();
+    Future<void> signInWithEmailAndPassword() async {
+      try{
+        await Auth().signInWithEmailAndPassword(
+          email: _emailController.text, 
+          password: _passwordController.text,
+          );
+      } on FirebaseAuthException catch(e) {
+        setState(() {
+          errorMessage = e.message;
+        });
+      }
+    }
+
+    Widget _errorMessage() {
+      return Text(errorMessage == '' ? '' : 'Humm ? $errorMessage');
+    }
+
+    
+
+  
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,11 +79,11 @@ class _LoginState extends State<Login> {
            ),
            child: Column(
              children: [
-               TextField(
-                controller: emailController,
+               TextField(   
+                controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
+                 decoration: InputDecoration(
                   labelText: "Email",
                   labelStyle: TextStyle(fontSize: 18, color: Colors.white),
                   prefixIcon: Icon(Icons.email,color:Color(0xff45B39D),size: 20,),
@@ -73,7 +97,7 @@ class _LoginState extends State<Login> {
                ),
                  TextField(
                       obscureText: _isObscured,
-                      controller: passwordController,
+                      controller: _passwordController,
                       textInputAction: TextInputAction.done,
                                  keyboardType: TextInputType.visiblePassword,
                                  decoration: InputDecoration(
@@ -94,13 +118,15 @@ class _LoginState extends State<Login> {
                                  )
                                  ),
                                 ),
+
+                                _errorMessage(),
                SizedBox(
                 height: 20,
 
                ),
 
 
-               ElevatedButton(onPressed: signIn,
+               ElevatedButton(onPressed: signInWithEmailAndPassword,
                  style: ButtonStyle (
                    minimumSize: MaterialStateProperty.all(Size(380, 40)),
                    backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
@@ -151,10 +177,5 @@ class _LoginState extends State<Login> {
       ), 
     );
   }
-    Future signIn() async {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailController.text.trim(), 
-      password: passwordController.text.trim(),
-      );
-    }
-}
+
+ }

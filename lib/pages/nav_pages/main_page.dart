@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:untitled1/pages/nav_pages/calender_page.dart';
-import 'package:untitled1/pages/nav_pages/profile_page.dart';
-import 'package:untitled1/pages/nav_pages/programs_page.dart';
-import 'package:untitled1/pages/nav_pages/reports_page.dart';
+import 'programs_page.dart';
+import 'calender_page.dart';
+import 'reports_page.dart';
+import 'profile_page.dart';
+
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

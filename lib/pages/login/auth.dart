@@ -1,24 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutterdatabasesalah/pages/login/login.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/calender_page.dart';
+class Auth {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-class Auth  extends StatelessWidget {
-  const Auth ({super.key});
+  User? get currentUser => _firebaseAuth.currentUser;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body:StreamBuilder<User?>(
-    stream : FirebaseAuth.instance.authStateChanges(),
-         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-           return Calender_page();
-          }else {
-            return Login();
-          }
-        },
-        ) ,
+  Stream <User?> get authStateChanges => _firebaseAuth.authStateChanges();
+
+  Future<void> signInWithEmailAndPassword({
+      required String email,
+      required String password,
+  }) async {
+    await _firebaseAuth.signInWithEmailAndPassword(
+    email: email,
+     password: password,
     );
   }
+  Future<void> signOut() async {
+  await _firebaseAuth.signOut();
+  }
+
 }
+
