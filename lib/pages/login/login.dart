@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unused_local_variable, unused_field
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class _LoginState extends State<Login> {
  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
+  
   bool _isLoading = false;
 
   void _login() async {
@@ -27,8 +27,7 @@ class _LoginState extends State<Login> {
     });
 
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
@@ -114,19 +113,18 @@ class _LoginState extends State<Login> {
                   }
                   return null;
                 },
-                
                       controller: _passwordController,
                       textInputAction: TextInputAction.done,
-                       keyboardType: TextInputType.visiblePassword,
-                      decoration: InputDecoration(
+                                 keyboardType: TextInputType.visiblePassword,
+                                 decoration: InputDecoration(
                     labelText: "Password",
                     labelStyle: TextStyle(fontSize: 18, color: Colors.white),
                     prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
-                    focusedBorder: UnderlineInputBorder(
+              
+                                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
                                  )
                                  ),
-                              
                                 ),
                                
                                
@@ -192,24 +190,4 @@ class _LoginState extends State<Login> {
   }
 
  }
- class Auth {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
-  User? get currentUser => _firebaseAuth.currentUser;
-
-  Stream <User?> get authStateChanges => _firebaseAuth.authStateChanges();
-
-  Future<void> signInWithEmailAndPassword({
-      required String email,
-      required String password,
-  }) async {
-    await _firebaseAuth.signInWithEmailAndPassword(
-    email: email,
-     password: password,
-    );
-  }
-  Future<void> signOut() async {
-  await _firebaseAuth.signOut();
-  }
-
-}
+ 

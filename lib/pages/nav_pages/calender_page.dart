@@ -104,8 +104,16 @@ class _Calender_pageState extends State<Calender_page> {
                        
             headerStyle:
             
-
+    
              HeaderStyle(
+                leftChevronIcon: Icon(
+                   Icons.chevron_left,
+                  color: Color(0xff45B39D), // Change the color of the arrow here
+                   ),
+                rightChevronIcon: Icon(
+                  Icons.chevron_right,
+                  color: Color(0xff45B39D), // Change the color of the arrow here
+                   ),
               formatButtonVisible: false,
                titleCentered: true,
                titleTextStyle: TextStyle(
