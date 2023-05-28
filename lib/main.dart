@@ -1,29 +1,27 @@
-
-
-
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterdatabasesalah/pages/SignUp/VerificationCode.dart';
-import 'package:flutterdatabasesalah/pages/SignUp/profiledetials.dart';
-import 'package:flutterdatabasesalah/pages/SignUp/setpassword.dart';
-import 'package:flutterdatabasesalah/pages/SignUp/setup.dart';
-import 'package:flutterdatabasesalah/pages/SignUp/signup.dart';
-import 'package:flutterdatabasesalah/pages/login/forgetpass.dart';
 import 'package:flutterdatabasesalah/pages/login/login.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/Calenderbuttons/camera.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/Calenderbuttons/enternutrition.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/Calenderbuttons/enterweight.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/Calenderbuttons/excrsise_page.dart';
 import 'package:flutterdatabasesalah/pages/nav_pages/main_page.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/reportsbuttons/RPE.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/reportsbuttons/bodymeasurements.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/reportsbuttons/bodyweight.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/reportsbuttons/nutrition.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/reportsbuttons/progressphoto.dart';
-import 'package:flutterdatabasesalah/pages/nav_pages/reportsbuttons/stepcount.dart';
-import 'package:flutterdatabasesalah/widget_tree.dart';
 import 'package:get/get.dart';
+
+import 'pages/SignUp/profiledetials.dart';
+import 'pages/SignUp/setpassword.dart';
+import 'pages/SignUp/setup.dart';
+import 'pages/SignUp/signup.dart';
+import 'pages/login/forgetpass.dart';
+import 'pages/nav_pages/Calenderbuttons/camera.dart';
+import 'pages/nav_pages/Calenderbuttons/enternutrition.dart';
+import 'pages/nav_pages/Calenderbuttons/enterweight.dart';
+import 'pages/nav_pages/Calenderbuttons/excrsise_page.dart';
+import 'pages/nav_pages/reportsbuttons/RPE.dart';
+import 'pages/nav_pages/reportsbuttons/bodymeasurements.dart';
+import 'pages/nav_pages/reportsbuttons/bodyweight.dart';
+import 'pages/nav_pages/reportsbuttons/nutrition.dart';
+import 'pages/nav_pages/reportsbuttons/progressphoto.dart';
+import 'pages/nav_pages/reportsbuttons/stepcount.dart';
+
 
 
 
@@ -37,16 +35,13 @@ Future<void> main() async{
 }
 class MyApp extends StatelessWidget {
    const MyApp({super.key}); 
-  
-
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-  initialRoute: '/Login',
-  routes: {
-    '/Login': (context) => const Login(),
+      routes: {
+      '/Login': (context) => const Login(),
     '/verification code': (context) => const Code(),
     '/setpassword': (context) => const Password(),
     '/Setup': (context) => const Setup(),
@@ -63,11 +58,10 @@ class MyApp extends StatelessWidget {
     '/Camera': (context) => const Camera(), 
     '/enter_weight': (context) => const Enter_Weight(), 
     '/enter_nutrition': (context) => const Enter_Nut(), 
-    '/excrsise': (context) => const Add(),       
-  }, 
-      home: WidgetTree(),
+    '/excrsise': (context) => const Add(), 
+      },
+      home: Login(),
   );
-  
   }
 }
 

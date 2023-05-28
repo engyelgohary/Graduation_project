@@ -2,7 +2,8 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterdatabasesalah/pages/login/auth.dart';
+import 'package:flutterdatabasesalah/pages/nav_pages/main_page.dart';
+
 
 
 
@@ -14,38 +15,43 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  var _isObscured;
+ final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  @override
- void initState() {
-    super.initState();
-    _isObscured = true;
+  bool _isLoading = false;
+
+  void _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainPage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      print('Failed to sign in with email and password: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+       SnackBar(
+          content: Text('Failed to sign in. Please check your credentials.'),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
-   String? errorMessage ='';
-    bool isLogin = true;
-     final TextEditingController _emailController = TextEditingController();
-    final  TextEditingController _passwordController = TextEditingController();
-    Future<void> signInWithEmailAndPassword() async {
-      try{
-        await Auth().signInWithEmailAndPassword(
-          email: _emailController.text, 
-          password: _passwordController.text,
-          );
-      } on FirebaseAuthException catch(e) {
-        setState(() {
-          errorMessage = e.message;
-        });
-      }
-    }
-
-    Widget _errorMessage() {
-      return Text(errorMessage == '' ? '' : 'Humm ? $errorMessage');
-    }
-
-    
-
-  
-
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
    backgroundColor: Colors.black,
@@ -79,7 +85,13 @@ class _LoginState extends State<Login> {
            ),
            child: Column(
              children: [
-               TextField(   
+               TextFormField( 
+                 validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter an email';
+                  }
+                  return null;
+                },  
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
@@ -95,45 +107,46 @@ class _LoginState extends State<Login> {
                SizedBox(
                 height: 5,
                ),
-                 TextField(
-                      obscureText: _isObscured,
+                 TextFormField(
+                   validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a password';
+                  }
+                  return null;
+                },
+                
                       controller: _passwordController,
                       textInputAction: TextInputAction.done,
-                                 keyboardType: TextInputType.visiblePassword,
-                                 decoration: InputDecoration(
+                       keyboardType: TextInputType.visiblePassword,
+                      decoration: InputDecoration(
                     labelText: "Password",
                     labelStyle: TextStyle(fontSize: 18, color: Colors.white),
-                     suffixIcon: IconButton(
-                      icon: _isObscured ? const Icon(Icons.visibility,color:Color(0xff45B39D)) : const Icon(Icons.visibility_off,color:Color(0xff45B39D)),
-                      onPressed: (){
-                        setState(() {
-                          _isObscured =!_isObscured;
-                        });
-                      }, 
-                     ),
                     prefixIcon: Icon(Icons.lock,color:Color(0xff45B39D),size: 20,),
-                    
-                                 focusedBorder: UnderlineInputBorder(
+                    focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color.fromARGB(255, 32, 33, 34)),
                                  )
                                  ),
+                              
                                 ),
-
-                                _errorMessage(),
+                               
+                               
                SizedBox(
                 height: 20,
 
                ),
 
 
-               ElevatedButton(onPressed: signInWithEmailAndPassword,
+               ElevatedButton(onPressed: _isLoading ? null : _login,
+                child: _isLoading
+                    ? CircularProgressIndicator()
+                    : Text('Login',style: TextStyle(fontSize: 18),),
                  style: ButtonStyle (
                    minimumSize: MaterialStateProperty.all(Size(380, 40)),
                    backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
                    padding: MaterialStateProperty.all(EdgeInsets.all(10)),
                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(10))),
                  ),
-                 child:Text("Login", style: TextStyle(fontSize: 18),),
+                
                ),
 
       
@@ -179,3 +192,24 @@ class _LoginState extends State<Login> {
   }
 
  }
+ class Auth {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  User? get currentUser => _firebaseAuth.currentUser;
+
+  Stream <User?> get authStateChanges => _firebaseAuth.authStateChanges();
+
+  Future<void> signInWithEmailAndPassword({
+      required String email,
+      required String password,
+  }) async {
+    await _firebaseAuth.signInWithEmailAndPassword(
+    email: email,
+     password: password,
+    );
+  }
+  Future<void> signOut() async {
+  await _firebaseAuth.signOut();
+  }
+
+}

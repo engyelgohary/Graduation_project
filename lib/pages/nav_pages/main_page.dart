@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
+import '../login/login.dart';
 import 'programs_page.dart';
 import 'calender_page.dart';
 import 'reports_page.dart';
@@ -13,6 +16,7 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
+  User? _user;
   List pages = [
     Calender_page(),
     Programs_page(),
@@ -25,6 +29,17 @@ class MainPageState extends State<MainPage> {
       currentIndex = index;
     });
   }
+  @override
+  void initState() {
+    super.initState();
+
+    // Check if the user is already signed in
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      setState(() {
+        _user = user;
+      });
+    });
+  } 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +73,7 @@ class MainPageState extends State<MainPage> {
             ),
               BottomNavigationBarItem(
             label: 'Profile',
-            icon:Icon(Icons.person_outline)
+            icon:Icon(IconlyLight.user2)
             ),
       ]
       ),
