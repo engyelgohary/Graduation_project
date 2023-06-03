@@ -5,10 +5,6 @@ import 'package:flutterdatabasesalah/pages/SignUp/VerificationCode.dart';
 import 'package:flutterdatabasesalah/pages/login/login.dart';
 import 'package:flutterdatabasesalah/pages/nav_pages/main_page.dart';
 import 'package:get/get.dart';
-
-import 'pages/SignUp/profiledetials.dart';
-import 'pages/SignUp/setpassword.dart';
-import 'pages/SignUp/setup.dart';
 import 'pages/SignUp/signup.dart';
 import 'pages/login/forgetpass.dart';
 import 'pages/nav_pages/Calenderbuttons/camera.dart';
@@ -43,9 +39,6 @@ class MyApp extends StatelessWidget {
       routes: {
       '/Login': (context) => const Login(),
     '/verification code': (context) => const Code(),
-    '/setpassword': (context) => const Password(),
-    '/Setup': (context) => const Setup(),
-    '/profile details': (context) => const Profile(),
     '/forgetpass': (context) => const Forget(),
     '/signup': (context) => const Signup(),
     '/main_page': (context) => const MainPage(), 
