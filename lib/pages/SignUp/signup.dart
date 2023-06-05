@@ -1,7 +1,7 @@
 
 // ignore_for_file: prefer_const_constructors, unused_field
 
-import 'dart:io';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,17 +31,22 @@ class _SignupState extends State<Signup> {
   String _deadlift = '';
   String _confrimpassword='';
   
-    File ?_profileImage;
-    Future<void> _showImagePicker() async {
-  final pickedFile = await ImagePicker().getImage(
-    source: ImageSource.gallery, // Use ImageSource.camera for taking a new photo
-  );
 
-  if (pickedFile != null) {
-    setState(() {
-      _profileImage = File(pickedFile.path);
-    });
+
+pickImage(ImageSource source) async {
+  final ImagePicker _imagePicker = ImagePicker();
+  XFile? _file = await _imagePicker.pickImage(source: source);
+  if (_file != null){
+    return await _file.readAsBytes();
   }
+  print('No image selected');
+}
+Uint8List?_image;
+void selectImage() async {
+  Uint8List img = await pickImage(ImageSource.gallery);
+  setState(() {
+    _image = img;
+  });
 }
 
 bool _obscureText = true;
@@ -380,7 +385,7 @@ bool _obscureText = true;
     );
   }
 
-  Widget _buildNamePage () {
+  Widget _buildNamePage() {
     return Scaffold(
        backgroundColor: Colors.black,
       appBar: AppBar(
@@ -591,31 +596,28 @@ Widget  _buildLiftsPage() {
                       Center(
                         child: Stack(
                           children:<Widget> [
-                         //ClipOval(
-                           //child:pickedImage !=null ? Image.file(pickedImage !,width: 100,height: 100,fit:BoxFit.cover,):
-                            GestureDetector(
-                              onTap: () {
-            _showImagePicker();
-          },
-                              child: CircleAvatar(
+                            _image != null ?
+                            CircleAvatar(
+                              radius: 50.0,
+                              backgroundImage: MemoryImage(_image!),
+                            )
+                         :
+                          CircleAvatar(
                               backgroundColor: Colors.grey,
                                radius: 50.0,
-                              backgroundImage: _profileImage != null
-                                            ? FileImage(_profileImage!)
-                                            : null,
-                                            child: _profileImage == null
-                ? Icon(Icons.camera_alt, size: 50.0)
-                : null,
-                                                       ),
-                            ),
-                        // ),
+                               backgroundImage: AssetImage('images/Profile.png',)
+                             ),
+                           
+                           Positioned(bottom:1,right: -2,
+                            child: IconButton(onPressed:selectImage,
+                             icon: Icon(Icons.add_a_photo_outlined,color: Colors.black,size: 25,)))
                          
                          ],
 
                         ),
                       ),
                       SizedBox(
-                        height: 15,
+                        height: 15, 
                       ),
                       Container
                         (alignment: Alignment.topLeft,
@@ -644,9 +646,13 @@ Widget  _buildLiftsPage() {
                       textInputAction: TextInputAction.next,
                               validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter your squat value';
-              }
-              return null;
+                return 'Please enter your 1RM';
+                                  }
+                                  if (double.tryParse(value) == null ||
+                                      double.parse(value) <= 0) {
+                                    return 'Please enter a valid weight';
+                                  }
+                                  return null;
             },
             onChanged: (value) {
               setState(() {
@@ -674,9 +680,13 @@ Widget  _buildLiftsPage() {
                       textInputAction: TextInputAction.next,
                                validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter your bench value';
-              }
-              return null;
+                return 'Please enter your 1RM';
+                                  }
+                                  if (double.tryParse(value) == null ||
+                                      double.parse(value) <= 0) {
+                                    return 'Please enter a valid weight';
+                                  }
+                                  return null;
             },
             onChanged: (value) {
               setState(() {
@@ -704,9 +714,13 @@ Widget  _buildLiftsPage() {
                             child: TextFormField(
                                validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter your deadlift value';
-              }
-              return null;
+               return 'Please enter your 1RM';
+                                  }
+                                  if (double.tryParse(value) == null ||
+                                      double.parse(value) <= 0) {
+                                    return 'Please enter a valid weight';
+                                  }
+                                  return null;
             },
             onChanged: (value) {
               setState(() {
@@ -746,20 +760,17 @@ SizedBox(
                  ),
                  ElevatedButton(  onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                  
                     try {
                       await _authService.registerUser(_email, _password);
-                      await _authService.saveUserInfo(
-                        _firstName,
-                        _lastName,
-                        _squat,
-                        _bench,
-                        _deadlift,
-                    
-                      
-
-                       
-                        
-                      );
+                   await _authService.saveUserInfo(
+                     _firstName,
+                      _lastName, 
+                      _squat,
+                       _bench, 
+                       _deadlift,
+                        _image!
+                       );
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => MainPage(),
