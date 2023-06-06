@@ -1,10 +1,12 @@
 // ignore_for_file: unused_local_variable
 
-import 'dart:io';
+
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+
 
 import '../login/login.dart';
 
@@ -16,94 +18,140 @@ class Profile_page extends StatefulWidget {
 }
 
 class _Profile_pageState extends State<Profile_page> {
-  File?pickedImage;
-void imagePickerOption() {
-    Get.bottomSheet(
-      SingleChildScrollView(
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(10.0),
-            topRight: Radius.circular(10.0),
-          ),
-          child: Container(
-            color: Color.fromARGB(255, 48, 50, 51),
-            height: 150,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 10,),
-                    child: const Text(
-                      "Select Image From",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 40,),
-                        child: ElevatedButton.icon(
-                          style: ButtonStyle(
-                             backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
-                          ),
-                          onPressed: () {
-                          pickImage(ImageSource.camera);
-                          },
-                          icon: const Icon(Icons.camera),
-                          label: const Text("CAMERA"),
-                          
-                        ),
-                      ),
-                  ElevatedButton.icon(
-                      style: ButtonStyle(
-                             backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
-                          ),
-                    onPressed: () {
-                    pickImage(ImageSource.gallery);
-                    },
-                    icon: const Icon(Icons.image),
-                    label: const Text("GALLERY"),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-  pickImage(ImageSource imageType) async {
-    try {
-      final photo = await ImagePicker().pickImage(source: imageType);
-      if (photo == null) return;
-      final tempImage = File(photo.path);
-      setState(() {
-        pickedImage = tempImage;
-      });
+   final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final squatController = TextEditingController();
+  final benchController = TextEditingController();
+  final deadliftController = TextEditingController();
 
-      Get.back();
-    } catch (error) {
-      debugPrint(error.toString());
-    }
+
+  late String firstName = '';
+  late String lastName = '';
+  late String squat = '';
+  late String bench = '';
+  late String deadlift = '';
+  late String imageUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    final userRef = FirebaseFirestore.instance.collection('Athlete_').doc(user!.uid);
+
+    userRef.snapshots().listen((snapshot) {
+      final userData = snapshot.data()! as Map<String, dynamic>;
+      setState(() {
+        firstName = userData['firstName'];
+        lastName = userData['lastName'];
+        squat = userData['squat'];
+        bench = userData['bench'];
+        deadlift = userData['deadlift'];
+        imageUrl = userData['imageLink'];
+      });
+    });
   }
 
   @override
-  Widget build(BuildContext context) {
-    return  Scaffold(
-               backgroundColor: Color.fromARGB(255, 16, 16, 16),
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    squatController.dispose();
+    benchController.dispose();
+    deadliftController.dispose();
+    super.dispose();
+  }
+
+  void _showEditDialog() {
+    firstNameController.text = firstName;
+    lastNameController.text = lastName;
+    squatController.text = squat;
+    benchController.text = bench;
+    deadliftController.text = deadlift;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Profile'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: firstNameController,
+                decoration: InputDecoration(
+                  labelText: 'First Name',
+                ),
+              ),
+              TextFormField(
+                controller: lastNameController,
+                decoration: InputDecoration(
+                  labelText: 'Last Name',
+                ),
+              ),
+              TextFormField(
+                controller: squatController,
+                decoration: InputDecoration(
+                  labelText: 'Squat',
+                ),
+              ),
+              TextFormField(
+                controller: benchController,
+                decoration: InputDecoration(
+                  labelText: 'Bench',
+                ),
+              ),
+              TextFormField(
+                controller: deadliftController,
+                decoration: InputDecoration(
+                  labelText: 'Deadlift',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final newFirstName = firstNameController.text;
+                final newLastName = lastNameController.text;
+                final newSquat = squatController.text;
+                final newBench = benchController.text;
+                final newDeadlift = deadliftController.text;
+
+                final userRef = FirebaseFirestore.instance.collection('Athlete_').doc(FirebaseAuth.instance.currentUser!.uid);
+                userRef.update({
+                  'firstName': newFirstName,
+                  'lastName': newLastName,
+                  'squat': newSquat,
+                  'bench': newBench,
+                  'deadlift': newDeadlift,
+                });
+                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated')));
+                Navigator.pop(context);
+                 
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  
+ 
+  @override
+ Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final userRef = FirebaseFirestore.instance.collection('Athlete_').doc(user!.uid);
+
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 16, 16, 16),
                 appBar: AppBar( 
                 toolbarHeight: 60,
                  backgroundColor:Colors.black,
@@ -112,7 +160,7 @@ void imagePickerOption() {
             titleSpacing: 15,
             actions: [
               ElevatedButton.icon( onPressed:(){
-                 Navigator.pushNamed(context, '/progressPhoto');
+                _showEditDialog();
               },
               style: ElevatedButton.styleFrom(
                     minimumSize: Size(100, 80),
@@ -124,33 +172,28 @@ void imagePickerOption() {
               label: Text('Edit',style: TextStyle(color: Color(0xff45B39D),fontSize: 15,),))
             ],
                   ),
-                  body: Column(
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                          child: Stack(
-                            children:<Widget> [
-                           ClipOval(
-                             child:pickedImage !=null ? Image.file(pickedImage !,width: 100,height: 100,fit:BoxFit.cover,):
-                              CircleAvatar(
-                              backgroundColor: Colors.grey,
-                               radius: 50.0,
-                               backgroundImage: AssetImage('images/Profile.png',)
-                             ),
-                           ),
-                           Positioned(bottom:1,right: -2,
-                            child: IconButton(onPressed:imagePickerOption,
-                             icon: Icon(Icons.edit,color: Colors.black,size: 25,)))
-                           ],
-          
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-              ElevatedButton(onPressed: ()async {
+      body:Column(
+              children: [
+                SizedBox(
+height: 20,
+                ),
+                Center(
+                  child: Stack(
+                    children:<Widget>[
+                     CircleAvatar(
+                      backgroundImage: NetworkImage(imageUrl),
+                      radius: 80,
+                    ),
+                     Positioned(bottom:5,right: 5,
+                            child: IconButton(onPressed:(){},
+                             icon: Icon(Icons.edit,color: Color(0xff45B39D),size: 25,)))
+                    ]
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text('$firstName $lastName', style: TextStyle(fontSize: 30,color: Colors.white,)),
+                SizedBox(height: 8),
+                 ElevatedButton(onPressed: ()async {
     await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
       context,
@@ -167,8 +210,8 @@ void imagePickerOption() {
                  ),
                 
                ),
-            ]
-            ),
-          );
-          }
+              ],
+    ), 
+    );
   }
+}

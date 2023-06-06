@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterdatabasesalah/pages/SignUp/VerificationCode.dart';
 import 'package:flutterdatabasesalah/pages/login/login.dart';
 import 'package:flutterdatabasesalah/pages/nav_pages/main_page.dart';
+import 'package:flutterdatabasesalah/pages/nav_pages/profilebuttons/editprofile.dart';
 import 'package:get/get.dart';
 import 'pages/SignUp/signup.dart';
 import 'pages/login/forgetpass.dart';
@@ -52,6 +53,8 @@ class MyApp extends StatelessWidget {
     '/enter_weight': (context) => const Enter_Weight(), 
     '/enter_nutrition': (context) => const Enter_Nut(), 
     '/excrsise': (context) => const Add(), 
+    '/editprofile': (context) => const Editprofile(), 
+   
       },
       home: Login(),
   );
