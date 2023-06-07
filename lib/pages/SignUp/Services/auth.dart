@@ -57,7 +57,7 @@ Uint8List file,
 ) async {
 try {
 final user = _auth.currentUser;
-String imageUrl = await uploadImageTOStorage('profileImage', file);
+String imageUrl = await uploadImageTOStorage('${user?.uid}/athletePic', file);
   if (user != null) {
     await _db.collection('Athletes').doc(user.uid).set({
       'firstName': firstName,
@@ -119,7 +119,7 @@ Future<void> updateUserProfile(String firstName, String lastName, String squat, 
       if (image != null) {
         final ref = FirebaseStorage.instance
             .ref()
-            .child('profile_images')
+            .child('athletePic')
             .child(user.uid);
         final task = ref.putFile(image);
         final snapshot = await task.whenComplete(() {});
