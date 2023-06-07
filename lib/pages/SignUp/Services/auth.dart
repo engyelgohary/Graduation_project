@@ -1,4 +1,5 @@
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +18,7 @@ Future<String> uploadImageTOStorage(String athletePic,Uint8List file) async{
   try {
   final user = _auth.currentUser;
   if (user != null) {
-  Reference ref = _storage.ref().child('${user.uid}/$athletePic').child('pic');
+  Reference ref = _storage.ref().child('${user.uid}/$athletePic');
   UploadTask uploadTask = ref.putData(file);
   TaskSnapshot snapshot = await uploadTask;
   String downloadurl = await snapshot.ref.getDownloadURL();
@@ -58,7 +59,7 @@ try {
 final user = _auth.currentUser;
 String imageUrl = await uploadImageTOStorage('profileImage', file);
   if (user != null) {
-    await _db.collection('Athlete_').doc(user.uid).set({
+    await _db.collection('Athletes').doc(user.uid).set({
       'firstName': firstName,
       'lastName': lastName,
       'squat': squat,
@@ -101,27 +102,33 @@ return false;
   Future<void> signOut() async {
     await _auth.signOut();
   }
-  Future<void> updateUserProfile(String firstName, String lastName, String squat, String bench, String deadlift, Uint8List file) async {
-  try {
-    final user = _auth.currentUser;
+Future<void> updateUserProfile(String firstName, String lastName, String squat, String bench, String deadlift, File? image) async {
+    final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      String imageUrl = await uploadImageTOStorage('profileImage', file);
-      await _db.collection('Athlete_').doc(user.uid).update({
+      final data = {
         'firstName': firstName,
         'lastName': lastName,
         'squat': squat,
         'bench': bench,
         'deadlift': deadlift,
-        'imageLink': imageUrl,
-      });
-    } else {
-      throw Exception('User is not signed in');
+      };
+      await FirebaseFirestore.instance
+          .collection('Athletes')
+          .doc(user.uid)
+          .update(data);
+      if (image != null) {
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('profile_images')
+            .child(user.uid);
+        final task = ref.putFile(image);
+        final snapshot = await task.whenComplete(() {});
+        final url = await snapshot.ref.getDownloadURL();
+        await FirebaseFirestore.instance
+            .collection('Athletes')
+            .doc(user.uid)
+            .update({'imageLink': url});
+      }
     }
-  } catch (error, stackTrace) {
-    print('Error updating user info: $error');
-    print(stackTrace);
-    // Handle error updating user info
   }
-}
-
 }

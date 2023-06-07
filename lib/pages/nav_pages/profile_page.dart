@@ -1,10 +1,6 @@
-// ignore_for_file: unused_local_variable
-
-
-
+// ignore_for_file: unused_local_variable, prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 
 
@@ -18,200 +14,284 @@ class Profile_page extends StatefulWidget {
 }
 
 class _Profile_pageState extends State<Profile_page> {
-   final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final squatController = TextEditingController();
-  final benchController = TextEditingController();
-  final deadliftController = TextEditingController();
+  
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _squatController = TextEditingController();
+  final TextEditingController _benchController = TextEditingController();
+  final TextEditingController _deadliftController = TextEditingController();
 
-
-  late String firstName = '';
-  late String lastName = '';
-  late String squat = '';
-  late String bench = '';
-  late String deadlift = '';
-  late String imageUrl = '';
+  String? _imageUrl;
+  
 
   @override
   void initState() {
     super.initState();
-    final user = FirebaseAuth.instance.currentUser;
-    final userRef = FirebaseFirestore.instance.collection('Athlete_').doc(user!.uid);
+    _loadUserData();
+  }
 
-    userRef.snapshots().listen((snapshot) {
-      final userData = snapshot.data()! as Map<String, dynamic>;
-      setState(() {
-        firstName = userData['firstName'];
-        lastName = userData['lastName'];
-        squat = userData['squat'];
-        bench = userData['bench'];
-        deadlift = userData['deadlift'];
-        imageUrl = userData['imageLink'];
-      });
-    });
+  Future<void> _loadUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('Athletes')
+          .doc(user.uid)
+          .get();
+      if (doc.exists) {
+        final data = doc.data()!;
+        _firstNameController.text = data['firstName'];
+        _lastNameController.text = data['lastName'];
+        _squatController.text = data['squat'];
+        _benchController.text = data['bench'];
+        _deadliftController.text = data['deadlift'];
+        setState(() {
+          _imageUrl = data['imageLink'];
+        });
+      }
+    }
   }
 
   @override
-  void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    squatController.dispose();
-    benchController.dispose();
-    deadliftController.dispose();
-    super.dispose();
-  }
-
-  void _showEditDialog() {
-    firstNameController.text = firstName;
-    lastNameController.text = lastName;
-    squatController.text = squat;
-    benchController.text = bench;
-    deadliftController.text = deadlift;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Edit Profile'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: firstNameController,
-                decoration: InputDecoration(
-                  labelText: 'First Name',
-                ),
-              ),
-              TextFormField(
-                controller: lastNameController,
-                decoration: InputDecoration(
-                  labelText: 'Last Name',
-                ),
-              ),
-              TextFormField(
-                controller: squatController,
-                decoration: InputDecoration(
-                  labelText: 'Squat',
-                ),
-              ),
-              TextFormField(
-                controller: benchController,
-                decoration: InputDecoration(
-                  labelText: 'Bench',
-                ),
-              ),
-              TextFormField(
-                controller: deadliftController,
-                decoration: InputDecoration(
-                  labelText: 'Deadlift',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final newFirstName = firstNameController.text;
-                final newLastName = lastNameController.text;
-                final newSquat = squatController.text;
-                final newBench = benchController.text;
-                final newDeadlift = deadliftController.text;
-
-                final userRef = FirebaseFirestore.instance.collection('Athlete_').doc(FirebaseAuth.instance.currentUser!.uid);
-                userRef.update({
-                  'firstName': newFirstName,
-                  'lastName': newLastName,
-                  'squat': newSquat,
-                  'bench': newBench,
-                  'deadlift': newDeadlift,
-                });
-                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated')));
-                Navigator.pop(context);
-                 
-              },
-              child: Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  
- 
-  @override
- Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    final userRef = FirebaseFirestore.instance.collection('Athlete_').doc(user!.uid);
-
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 16, 16, 16),
-                appBar: AppBar( 
-                toolbarHeight: 60,
-                 backgroundColor:Colors.black,
-              automaticallyImplyLeading: false,
-              title: Text('Profile',style: TextStyle(fontSize:20),),
-            titleSpacing: 15,
-            actions: [
-              ElevatedButton.icon( onPressed:(){
-                _showEditDialog();
-              },
-              style: ElevatedButton.styleFrom(
-                    minimumSize: Size(100, 80),
-                    primary:Colors.black,
-                     padding: EdgeInsets.all(10),
-                     alignment: Alignment.centerLeft
-                  ),
-               icon: Icon(Icons.edit,color:Color(0xff45B39D)),
-              label: Text('Edit',style: TextStyle(color: Color(0xff45B39D),fontSize: 15,),))
-            ],
-                  ),
-      body:Column(
-              children: [
-                SizedBox(
-height: 20,
-                ),
-                Center(
-                  child: Stack(
-                    children:<Widget>[
-                     CircleAvatar(
-                      backgroundImage: NetworkImage(imageUrl),
-                      radius: 80,
+      appBar: AppBar(
+        toolbarHeight: 60,
+        backgroundColor: Colors.black,
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Profile',
+          style: TextStyle(fontSize: 20),
+        ),
+        titleSpacing: 15,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Login()),
+              );
+            },
+            icon: Icon(Icons.logout_outlined, color: Color(0xff45B39D)),
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            padding: EdgeInsets.all(10),
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Color.fromARGB(255, 48, 50, 51),
+            ),
+            child: Form(
+              child: Column(
+                children: [
+                  Center(
+                    child: Stack(
+                      children: <Widget>[
+                        CircleAvatar(
+                            backgroundColor: Colors.grey,
+                            radius: 50.0,
+                            backgroundImage:
+                          _imageUrl != null ? NetworkImage(_imageUrl!) : null),
+                        Positioned(
+                            bottom: 1,
+                            right: -2,
+                            child: IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: Color(0xff45B39D),
+                                  size: 25,
+                                ))),
+                                
+                      ],
                     ),
-                     Positioned(bottom:5,right: 5,
-                            child: IconButton(onPressed:(){},
-                             icon: Icon(Icons.edit,color: Color(0xff45B39D),size: 25,)))
-                    ]
                   ),
-                ),
-                SizedBox(height: 16),
-                Text('$firstName $lastName', style: TextStyle(fontSize: 30,color: Colors.white,)),
-                SizedBox(height: 8),
-                 ElevatedButton(onPressed: ()async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => Login()),
-    );
-  },
-            child: Text('Logout',style:TextStyle(fontSize: 20,),),
-             
-                 style: ButtonStyle (
-                   minimumSize: MaterialStateProperty.all(Size(380, 40)),
-                   backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 116, 11, 1)),
-                   padding: MaterialStateProperty.all(EdgeInsets.all(10)),
-                   shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(10))),
+                  SizedBox(
+                    height: 10,
+                  ),
+                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                     Text(
+                    _firstNameController.text,
+                     style: TextStyle(color: Colors.white,fontSize: 25),
+                  ),
+                  SizedBox(
+                    width: 3,
+                  ),
+                  Text(
+                    _lastNameController.text,
+                    style: TextStyle(color: Colors.white,fontSize: 25),
+                  ),
+                  ],
                  ),
-                
-               ),
-              ],
-    ), 
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 170,
+                          height: 50,
+                          child: TextFormField(
+                             controller: _firstNameController,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                                labelText: "FirstName",
+                                labelStyle: TextStyle(
+                                  color: Colors.white,
+                                ),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 53, 53, 53))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide:
+                                        BorderSide(color: Color(0xff45B39D)))),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 170,
+                          height: 50,
+                          child: TextFormField(
+                            controller: _lastNameController,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                                labelText: "LastName",
+                                labelStyle: TextStyle(
+                                  color: Colors.white,
+                                ),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 53, 53, 53))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide:
+                                        BorderSide(color: Color(0xff45B39D)))),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 50,
+                    child: TextFormField(
+                      controller: _squatController,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                          labelText: "Squat",
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 53, 53, 53))),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide:
+                                  BorderSide(color: Color(0xff45B39D)))),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 50,
+                    child: TextFormField(
+                      controller: _benchController,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                          labelText: "Bench",
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 53, 53, 53))),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide:
+                                  BorderSide(color: Color(0xff45B39D)))),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 50,
+                    child: TextFormField(
+                      controller: _deadliftController,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                          labelText: "Deadlift",
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 53, 53, 53))),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide:
+                                  BorderSide(color: Color(0xff45B39D)))),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: (){},
+            child: Text(
+              'Save',
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all(Size(380, 40)),
+              backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
+              padding: MaterialStateProperty.all(EdgeInsets.all(10)),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10))),
+            ),
+          ),
+        ]),
+      ),
     );
   }
 }
