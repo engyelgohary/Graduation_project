@@ -49,6 +49,8 @@ dependencies:
   email_validator: ^2.1.17
   flutter_chat_ui: ^1.6.6
   http: ^0.13.4
+  image_cropper: ^1.4.1
+
 
 dev_dependencies:
   flutter_test:

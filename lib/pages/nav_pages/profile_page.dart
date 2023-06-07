@@ -63,9 +63,29 @@ class _Profile_pageState extends State<Profile_page> {
   final deadlift = _deadliftController.text;
   File? file;
 
+  await _authService.updateUserProfile(
+    firstName,
+    lastName,
+    squat,
+    bench,
+    deadlift,
+    file,
+  );
+  
+  
+}
+Future<void> _edit() async {
+  final firstName = _firstNameController.text;
+  final lastName = _lastNameController.text;
+  final squat = _squatController.text;
+  final bench = _benchController.text;
+  final deadlift = _deadliftController.text;
+  File? file;
+
   final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
-  if (pickedFile != null) {
+  if(pickedFile != null){
     file = File(pickedFile.path);
+
   }
 
   await _authService.updateUserProfile(
@@ -75,6 +95,11 @@ class _Profile_pageState extends State<Profile_page> {
     bench,
     deadlift,
     file,
+  );
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Profile saved successfully!'),
+    ),
   );
 }
 
@@ -125,13 +150,13 @@ class _Profile_pageState extends State<Profile_page> {
                         CircleAvatar(
                             backgroundColor: Colors.grey,
                             radius: 50.0,
-                            backgroundImage:
-                          _imageUrl != null ? NetworkImage(_imageUrl!) : null),
+                           backgroundImage: _imageUrl != null ? NetworkImage(_imageUrl!) : null,
+                        ),
                         Positioned(
                             bottom: 1,
                             right: -2,
                             child: IconButton(
-                                onPressed: _saveUserData,
+                                onPressed:  _edit,
                                 icon: Icon(
                                   Icons.edit,
                                   color: Color(0xff45B39D),
