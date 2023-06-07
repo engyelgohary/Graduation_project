@@ -1,8 +1,12 @@
 // ignore_for_file: unused_local_variable, prefer_const_constructors, prefer_const_literals_to_create_immutables
+
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutterdatabasesalah/pages/SignUp/Services/auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../login/login.dart';
 
@@ -14,7 +18,7 @@ class Profile_page extends StatefulWidget {
 }
 
 class _Profile_pageState extends State<Profile_page> {
-  
+    final AuthService _authService = AuthService();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _squatController = TextEditingController();
@@ -50,6 +54,29 @@ class _Profile_pageState extends State<Profile_page> {
       }
     }
   }
+ 
+   Future<void> _saveUserData() async {
+  final firstName = _firstNameController.text;
+  final lastName = _lastNameController.text;
+  final squat = _squatController.text;
+  final bench = _benchController.text;
+  final deadlift = _deadliftController.text;
+  File? file;
+
+  final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+  if (pickedFile != null) {
+    file = File(pickedFile.path);
+  }
+
+  await _authService.updateUserProfile(
+    firstName,
+    lastName,
+    squat,
+    bench,
+    deadlift,
+    file,
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +131,7 @@ class _Profile_pageState extends State<Profile_page> {
                             bottom: 1,
                             right: -2,
                             child: IconButton(
-                                onPressed: () {},
+                                onPressed: _saveUserData,
                                 icon: Icon(
                                   Icons.edit,
                                   color: Color(0xff45B39D),
@@ -275,7 +302,7 @@ class _Profile_pageState extends State<Profile_page> {
             height: 20,
           ),
           ElevatedButton(
-            onPressed: (){},
+            onPressed: _saveUserData,
             child: Text(
               'Save',
               style: TextStyle(
