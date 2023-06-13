@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class Enter_Weight extends StatefulWidget {
@@ -9,6 +11,7 @@ class Enter_Weight extends StatefulWidget {
 
 class _Enter_WeightState extends State<Enter_Weight> {
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
        backgroundColor: Color.fromARGB(255, 16, 16, 16),

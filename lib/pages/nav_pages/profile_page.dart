@@ -62,27 +62,7 @@ class _Profile_pageState extends State<Profile_page> {
   final bench = _benchController.text;
   final deadlift = _deadliftController.text;
   File? file;
-
-  await _authService.updateUserProfile(
-    firstName,
-    lastName,
-    squat,
-    bench,
-    deadlift,
-    file,
-  );
-  
-  
-}
-Future<void> _edit() async {
-  final firstName = _firstNameController.text;
-  final lastName = _lastNameController.text;
-  final squat = _squatController.text;
-  final bench = _benchController.text;
-  final deadlift = _deadliftController.text;
-  File? file;
-
-  final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+   final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
   if(pickedFile != null){
     file = File(pickedFile.path);
 
@@ -96,12 +76,10 @@ Future<void> _edit() async {
     deadlift,
     file,
   );
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Profile saved successfully!'),
-    ),
-  );
+  
+  
 }
+
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +134,7 @@ Future<void> _edit() async {
                             bottom: 1,
                             right: -2,
                             child: IconButton(
-                                onPressed:  _edit,
+                                onPressed:(){},
                                 icon: Icon(
                                   Icons.edit,
                                   color: Color(0xff45B39D),

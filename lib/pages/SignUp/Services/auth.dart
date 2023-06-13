@@ -18,7 +18,7 @@ Future<String> uploadImageTOStorage(String athletePic,Uint8List file) async{
   try {
   final user = _auth.currentUser;
   if (user != null) {
-  Reference ref = _storage.ref().child('${user.uid}/$athletePic');
+  Reference ref = _storage.ref().child('${user.uid}/athletePic');
   UploadTask uploadTask = ref.putData(file);
   TaskSnapshot snapshot = await uploadTask;
   String downloadurl = await snapshot.ref.getDownloadURL();
@@ -119,8 +119,7 @@ Future<void> updateUserProfile(String firstName, String lastName, String squat, 
       if (image != null) {
         final ref = FirebaseStorage.instance
             .ref()
-            .child('athletePic')
-            .child(user.uid);
+            .child('${user.uid}/ChangePic');
         final task = ref.putFile(image);
         final snapshot = await task.whenComplete(() {});
         final url = await snapshot.ref.getDownloadURL();
