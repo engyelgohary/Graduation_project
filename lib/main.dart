@@ -11,6 +11,7 @@ import 'pages/nav_pages/Calenderbuttons/camera.dart';
 import 'pages/nav_pages/Calenderbuttons/enternutrition.dart';
 import 'pages/nav_pages/Calenderbuttons/enterweight.dart';
 import 'pages/nav_pages/Calenderbuttons/excrsise_page.dart';
+import 'pages/nav_pages/chat.dart';
 import 'pages/nav_pages/reportsbuttons/RPE.dart';
 import 'pages/nav_pages/reportsbuttons/bodymeasurements.dart';
 import 'pages/nav_pages/reportsbuttons/bodyweight.dart';
@@ -52,8 +53,8 @@ class MyApp extends StatelessWidget {
     '/enter_weight': (context) => const Enter_Weight(), 
     '/enter_nutrition': (context) => const Enter_Nut(), 
     '/excrsise': (context) => const Add(), 
-  
-   
+     '/chat': (context) => const chatPage(), 
+
       },
       home: Login(),
   );

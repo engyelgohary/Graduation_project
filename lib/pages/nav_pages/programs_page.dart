@@ -15,10 +15,13 @@ class Programs_page extends StatelessWidget {
               IconButton(onPressed: (){}, 
               icon: Icon(Icons.notifications)
               ),
-              IconButton(onPressed: (){}, 
+              IconButton(onPressed: (){
+                Navigator.pushNamed(context, '/chat');
+              }, 
               icon:Icon(Icons.message) )
             ],
         ),
+        body: Container(),
        
     );
   }

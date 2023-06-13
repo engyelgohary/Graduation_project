@@ -33,6 +33,7 @@ class _Calender_pageState extends State<Calender_page> {
               icon: Icon(Icons.notifications)
               ),
               IconButton(onPressed: (){
+                 Navigator.pushNamed(context, '/chat');
               }, 
               icon:Icon(Icons.message) )
             ],

@@ -23,7 +23,9 @@ class _ReportsState extends State<Reports> {
               IconButton(onPressed: (){}, 
               icon: Icon(Icons.notifications)
               ),
-              IconButton(onPressed: (){}, 
+              IconButton(onPressed: (){
+                Navigator.pushNamed(context, '/chat');
+              }, 
               icon:Icon(Icons.message) )
             ],
         ),
