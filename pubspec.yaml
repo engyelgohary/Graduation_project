@@ -50,6 +50,7 @@ dependencies:
   flutter_chat_ui: ^1.6.6
   http: ^0.13.4
   image_cropper: ^1.4.1
+  path_provider: ^2.0.15
 
 
 dev_dependencies:

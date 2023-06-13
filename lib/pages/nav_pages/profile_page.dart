@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +10,7 @@ import 'package:flutterdatabasesalah/pages/SignUp/Services/auth.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../login/login.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Profile_page extends StatefulWidget {
   const Profile_page({super.key});
@@ -18,7 +20,7 @@ class Profile_page extends StatefulWidget {
 }
 
 class _Profile_pageState extends State<Profile_page> {
-    final AuthService _authService = AuthService();
+  final AuthService _authService = AuthService();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _squatController = TextEditingController();
@@ -26,7 +28,6 @@ class _Profile_pageState extends State<Profile_page> {
   final TextEditingController _deadliftController = TextEditingController();
 
   String? _imageUrl;
-  
 
   @override
   void initState() {
@@ -54,32 +55,63 @@ class _Profile_pageState extends State<Profile_page> {
       }
     }
   }
- 
-   Future<void> _saveUserData() async {
-  final firstName = _firstNameController.text;
-  final lastName = _lastNameController.text;
-  final squat = _squatController.text;
-  final bench = _benchController.text;
-  final deadlift = _deadliftController.text;
-  File? file;
-   final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
-  if(pickedFile != null){
-    file = File(pickedFile.path);
 
+  Future<void> _saveUserData() async {
+    final firstName = _firstNameController.text;
+    final lastName = _lastNameController.text;
+    final squat = _squatController.text;
+    final bench = _benchController.text;
+    final deadlift = _deadliftController.text;
+
+    File? imageFile;
+    if (_image != null) {
+      Directory tempDir = await getTemporaryDirectory();
+      String tempPath = tempDir.path;
+      String filePath = '$tempPath/image.png';
+      imageFile = File(filePath);
+      await imageFile.writeAsBytes(_image!);
+    }
+    try {
+      await _authService.updateUserProfile(
+        firstName,
+        lastName,
+        squat,
+        bench,
+        deadlift,
+        imageFile,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Profile updated successfully'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update profile'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
-  await _authService.updateUserProfile(
-    firstName,
-    lastName,
-    squat,
-    bench,
-    deadlift,
-    file,
-  );
-  
-  
-}
+  pickImage(ImageSource source) async {
+    final ImagePicker _imagePicker = ImagePicker();
+    XFile? _file = await _imagePicker.pickImage(source: source);
+    if (_file != null) {
+      return await _file.readAsBytes();
+    }
+    print('No image selected');
+  }
 
+  Uint8List? _image;
+  void selectImage() async {
+    Uint8List img = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = img;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,44 +157,50 @@ class _Profile_pageState extends State<Profile_page> {
                   Center(
                     child: Stack(
                       children: <Widget>[
-                        CircleAvatar(
-                            backgroundColor: Colors.grey,
-                            radius: 50.0,
-                           backgroundImage: _imageUrl != null ? NetworkImage(_imageUrl!) : null,
-                        ),
+                        _image != null
+                            ? CircleAvatar(
+                                radius: 50.0,
+                                backgroundImage: MemoryImage(_image!),
+                              )
+                            : CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                radius: 50.0,
+                                backgroundImage: _imageUrl != null
+                                    ? NetworkImage(_imageUrl!)
+                                    : null,
+                              ),
                         Positioned(
                             bottom: 1,
                             right: -2,
                             child: IconButton(
-                                onPressed:(){},
+                                onPressed: selectImage,
                                 icon: Icon(
                                   Icons.edit,
                                   color: Color(0xff45B39D),
                                   size: 25,
                                 ))),
-                                
                       ],
                     ),
                   ),
                   SizedBox(
                     height: 10,
                   ),
-                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                     Text(
-                    _firstNameController.text,
-                     style: TextStyle(color: Colors.white,fontSize: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _firstNameController.text,
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                      SizedBox(
+                        width: 3,
+                      ),
+                      Text(
+                        _lastNameController.text,
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 3,
-                  ),
-                  Text(
-                    _lastNameController.text,
-                    style: TextStyle(color: Colors.white,fontSize: 25),
-                  ),
-                  ],
-                 ),
                   SizedBox(
                     height: 20,
                   ),
@@ -175,7 +213,7 @@ class _Profile_pageState extends State<Profile_page> {
                           width: 170,
                           height: 50,
                           child: TextFormField(
-                             controller: _firstNameController,
+                            controller: _firstNameController,
                             style: TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                                 labelText: "FirstName",
