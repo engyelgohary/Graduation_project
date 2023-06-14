@@ -50,11 +50,13 @@ class _Calender_pageState extends State<Calender_page> {
                 calendarFormat: _calendarFormat,
                 onDaySelected: (selectedDay, focusedDay) {
               if (!isSameDay(_selectedDate, selectedDay)) {
+
                 // Call `setState()` when updating the selected day
                 setState(() {
                   _selectedDate = selectedDay;
                   _focusedDay = focusedDay;
                 });
+                
               }
                         },
                         selectedDayPredicate: (day) {
@@ -121,11 +123,8 @@ class _Calender_pageState extends State<Calender_page> {
                titleTextStyle: TextStyle(
                 color: Color(0xff45B39D),
                 fontSize: 17,
-               ),
-               
+               ), 
             ),
-                          
-                      
               ),
               SizedBox(
                 height: 20,
