@@ -47,9 +47,10 @@ class _Enter_WeightState extends State<Enter_Weight> {
       if (weightSnap.docs.isNotEmpty) {
         final DocumentSnapshot weightDoc = weightSnap.docs.first;
         setState(() {
-          _currentWeight = weightDoc['weight'];
+          _currentWeight = weightDoc['weight'].toDouble();
         });
-        _weightController.text = _currentWeight?.toString() ?? '';
+        _weightController.text = _currentWeight?.toDouble().toString() ?? '';
+       
       }
     }
   }
@@ -65,7 +66,7 @@ class _Enter_WeightState extends State<Enter_Weight> {
           .get();
       final List<WeightData> weightDataList = weightSnap.docs.map((doc) {
         return WeightData(
-          weight: doc['weight'],
+          weight: doc['weight'].toDouble(),
           time: doc['time'].toDate(),
         );
       }).toList();
@@ -75,7 +76,7 @@ class _Enter_WeightState extends State<Enter_Weight> {
     }
   }
 
-  Future<void> _handleSubmit(BuildContext context) async {
+ Future<void> _handleSubmit(BuildContext context) async {
     final String weightString = _weightController.text.trim();
     if (weightString.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -123,14 +124,28 @@ class _Enter_WeightState extends State<Enter_Weight> {
     return [
       charts.Series<WeightData, DateTime>(
         id: 'Weight',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (WeightData data, _) => data.time,
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(Color(0xff45B39D)),
+        domainFn: (
+          WeightData data,
+          _,
+        ) =>
+            data.time,
         measureFn: (WeightData data, _) => data.weight,
         data: _weightDataList,
       ),
     ];
   }
 
+double _calculateAverageWeight() {
+    if (_weightDataList.isEmpty) {
+      return 0.0;
+    }
+    final totalWeight = _weightDataList.fold<double>(
+      0.0,
+      (sum, data) => sum + data.weight,
+    );
+    return totalWeight / _weightDataList.length;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,119 +159,188 @@ class _Enter_WeightState extends State<Enter_Weight> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image(image: AssetImage('images/logo.png'), height: 40),
+                Image(image: AssetImage('images/logo.png'), height: 50),
               ],
             ),
           ),
         ),
         title: Text('BodyWeight', style: TextStyle(fontSize: 15)),
         titleSpacing: -13,
-        actions: [
-          SizedBox(
-            width: 160,
-            child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/bodymeasurements');
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(40, 20),
-                  primary: Colors.black,
-                ),
-                icon:
-                    Icon(Icons.boy_rounded, size: 20, color: Color(0xff45B39D)),
-                label: Text('Measurements',
-                    style: TextStyle(fontSize: 15, color: Color(0xff45B39D)))),
-          ),
-        ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            margin: EdgeInsets.all(10),
-            color: Color.fromARGB(255, 49, 49, 49),
-            child: Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 300,
-                      child: charts.TimeSeriesChart(
-                        _createChartSeries(),
-                        animate: true,
-                        dateTimeFactory: const charts.LocalDateTimeFactory(),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              margin: EdgeInsets.all(10),
+              color: Color.fromARGB(255, 32, 32, 32),
+              child: Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                  ],
+                       Container(
+                        margin: EdgeInsets.only(left: 250),
+                         child: Text(
+                                     'Avg: ${_calculateAverageWeight().toStringAsFixed(2)} KG',
+                                     style: TextStyle(fontSize: 15,color: Colors.white),
+                                   ),
+                       ),
+                      SizedBox(
+                        height: 300,
+                        child: charts.TimeSeriesChart(
+                            _weightDataList.isEmpty
+                    ? []
+                    : [
+                        charts.Series<WeightData, DateTime>(
+                          id: 'Weight',
+                          colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+                          domainFn: (data, _) => data.time,
+                          measureFn: (data, _) => data.weight,
+                          data: _weightDataList,
+                        ),
+                      ],
+                animate: true,
+                dateTimeFactory: const charts.LocalDateTimeFactory(),
+                primaryMeasureAxis: charts.NumericAxisSpec(
+                        
+                            tickProviderSpec: charts.StaticNumericTickProviderSpec([
+          
+            charts.TickSpec(20),
+            charts.TickSpec(40),
+            charts.TickSpec(60),
+            charts.TickSpec(80),
+          ]),
+                            renderSpec: charts.GridlineRendererSpec(
+                              labelStyle: charts.TextStyleSpec(
+                                color:
+                                    charts.ColorUtil.fromDartColor(Colors.white),
+                              ),
+                              lineStyle: charts.LineStyleSpec(
+                                color:
+                                    charts.ColorUtil.fromDartColor(Colors.white),
+                              ),
+                            ),
                 ),
               ),
             ),
-          ),
-          Row(
-            children: [
+            SizedBox(height: 10),
+           
+            if (_weightDataList.isNotEmpty) ...[
+              
               Container(
-                margin: EdgeInsets.all(10),
-                color: Color.fromARGB(255, 49, 49, 49),
-                child: SizedBox(
-                  width: 280,
-                  height: 40,
-                  child: TextField(
-                    controller: _weightController,
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(
-                      hintText: 'Log daily body weight',
-                      hintStyle: TextStyle(fontSize: 13, color: Colors.white),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 49, 49, 49),
-                        ),
-                        borderRadius: BorderRadius.circular(5),
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Start weight', style: TextStyle(color: Colors.white,fontSize: 15),),
+                    Text('End weight', style: TextStyle(color: Colors.white,fontSize: 15),),
+                    Text('Weight changes', style: TextStyle(color: Colors.white,fontSize: 15),)
+                  ],
+                ),
+              ),
+           
+             Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text( '${_weightDataList.last.weight.toStringAsFixed(2)} KG\n', style: TextStyle(color: Colors.white,fontSize: 15),),
+                    Text('${_weightDataList.first.weight.toStringAsFixed(2)} KG\n', style: TextStyle(color: Colors.white,fontSize: 15),),
+                    Text('${(_weightDataList.first.weight - _weightDataList.last.weight).toStringAsFixed(2)} KG', style: TextStyle(color: Colors.white,fontSize: 15),)
+                  ],
+                ),
+              ),
+            ],
+             ],      
+        ),
+      ),
+              ),
+          
+            ),
+                         
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(10),
+                     decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                        color: Color.fromARGB(255, 48, 50, 51),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff45B39D)),
-                        borderRadius: BorderRadius.circular(5),
+                      child: SizedBox(
+                        width: 320,
+                        height: 40,
+                        child: TextField(    
+                          style: TextStyle(color: Colors.white), 
+                          controller: _weightController,
+                          keyboardType:TextInputType.number,
+                          decoration: InputDecoration(
+                              suffixIcon: IconButton(
+         onPressed: () => _handleSubmit(context),
+           icon: Icon(Icons.add,color: Color(0xff45B39D) ,),
+          ),
+                            hintText: 'Log daily body weight',
+                            hintStyle: TextStyle(fontSize: 13, color: Colors.white),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color:   Color.fromARGB(255, 48, 50, 51),
+                              ),
+                               borderRadius: BorderRadius.circular(30),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff45B39D)),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Text('KG' ,style: TextStyle(color: Colors.white,fontSize: 20),)
+                  ],
+                ),    
+        
+             SingleChildScrollView(     
+                child: Container(
+                   margin: EdgeInsets.all(10),  
+                  child: SizedBox(
+                    width: 350,
+                    child: Expanded(
+                      child: DataTable(
+                        columns: [
+                          DataColumn(label: Text('Date',style: TextStyle(color:Colors.white,),)),
+                          DataColumn(label: Text('KG',style: TextStyle(color:Colors.white,))),
+                        ],
+                        rows: _weightDataList.map((data) {
+                          return DataRow(cells:
+                          [
+                            DataCell(
+                                Text(DateFormat('EEE, MMM d, y').format(data.time),style:TextStyle(color: Colors.grey))),
+                            DataCell(Text(data.weight.toString(),style:TextStyle(color: Colors.grey)),),
+                          ]);
+                        }).toList(),
                       ),
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () => _handleSubmit(context),
-                child: Text('Save'),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Expanded(
-            child: SingleChildScrollView(
-              child: DataTable(
-                columns: [
-                  DataColumn(label: Text('Date')),
-                  DataColumn(label: Text('Weight (kg)')),
-                ],
-                rows: _weightDataList.map((data) {
-                  return DataRow(cells: [
-                    DataCell(
-                        Text(DateFormat('EEE, MMM d, y').format(data.time))),
-                    DataCell(Text(data.weight.toString())),
-                  ]);
-                }).toList(),
-              ),
-            ),
-          ),
-        ],
+             
+          ],
+        
+        ),
       ),
     );
   }
 }
 
 class WeightData {
-  final double weight;
+  final double weight ;
   final DateTime time;
 
   WeightData({required this.weight, required this.time});
