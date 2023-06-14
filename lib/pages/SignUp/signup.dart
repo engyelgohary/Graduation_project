@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_field
+// ignore_for_file: prefer_const_constructors, unused_field, no_leading_underscores_for_local_identifiers, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,17 +55,17 @@ class _SignupState extends State<Signup> {
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
-            _buildEmailPage(),
-            _buildPasswordPage(),
-            _buildNamePage(),
-            _buildLiftsPage(),
+            _emailPage(),
+            _passwordPage(),
+            _namePage(),
+            _liftsPage(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEmailPage() {
+  Widget _emailPage() {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -216,7 +216,7 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Widget _buildPasswordPage() {
+  Widget _passwordPage() {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -408,7 +408,7 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Widget _buildNamePage() {
+  Widget _namePage() {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -556,7 +556,7 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Widget _buildLiftsPage() {
+  Widget _liftsPage() {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
