@@ -33,22 +33,6 @@ class _ReportsState extends State<Reports> {
           
           child: Column(
             children: [
-             Container(
-              padding: EdgeInsets.all(10),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(425, 60),
-                  primary:Color.fromARGB(255, 48, 50, 51),
-                   padding: EdgeInsets.all(15),
-                   alignment: Alignment.centerLeft
-                ),
-                onPressed: (){
-                  Navigator.pushNamed(context, '/PRE');
-                },
-                 icon: Icon(Icons.insert_chart_outlined_outlined,color: Colors.white,size: 25,),
-                 label: Text('Session RPE' , style: TextStyle(fontSize: 15,),),
-                 ),
-             ),
               Container(
               padding: EdgeInsets.all(10),
               child: ElevatedButton.icon(
