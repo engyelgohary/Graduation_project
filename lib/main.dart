@@ -10,9 +10,7 @@ import 'pages/login/forgetpass.dart';
 import 'pages/nav_pages/Calenderbuttons/camera.dart';
 import 'pages/nav_pages/Calenderbuttons/enternutrition.dart';
 import 'pages/nav_pages/Calenderbuttons/enterweight.dart';
-import 'pages/nav_pages/Calenderbuttons/excrsise_page.dart';
 import 'pages/nav_pages/chat.dart';
-import 'pages/nav_pages/reportsbuttons/RPE.dart';
 import 'pages/nav_pages/reportsbuttons/bodymeasurements.dart';
 import 'pages/nav_pages/reportsbuttons/bodyweight.dart';
 import 'pages/nav_pages/reportsbuttons/nutrition.dart';
@@ -43,7 +41,6 @@ class MyApp extends StatelessWidget {
     '/forgetpass': (context) => const Forget(),
     '/signup': (context) => const Signup(),
     '/main_page': (context) => const MainPage(), 
-    '/PRE': (context) => const PRE(), 
     '/bodyweight': (context) => const BodyWeight(), 
     '/stepcount': (context) => const StepCount(), 
     '/bodymeasurements': (context) => const BodyM(),
@@ -52,7 +49,6 @@ class MyApp extends StatelessWidget {
     '/Camera': (context) => const Camera(), 
     '/enter_weight': (context) => const Enter_Weight(), 
     '/enter_nutrition': (context) => const Enter_Nut(), 
-    '/excrsise': (context) => const Add(), 
      '/chat': (context) => const chatPage(), 
 
       },

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class Enter_Weight extends StatefulWidget {
   const Enter_Weight({Key? key}) : super(key: key);
@@ -91,20 +92,22 @@ class _Enter_WeightState extends State<Enter_Weight> {
     }
     final User? user = _auth.currentUser;
     if (user != null) {
-      final CollectionReference weightCollection = _firestore
-          .collection('Athletes')
-          .doc(user.uid)
-          .collection('weight');
+      final CollectionReference weightCollection =
+          _firestore.collection('Athletes').doc(user.uid).collection('weight');
       final DateTime now = DateTime.now();
       final QuerySnapshot weightSnap = await weightCollection
-          .where('time', isGreaterThan: Timestamp.fromDate(now.subtract(const Duration(days: 1))))
+          .where('time',
+              isGreaterThan:
+                  Timestamp.fromDate(now.subtract(const Duration(days: 1))))
           .get();
       final List<QueryDocumentSnapshot> weightDocs = weightSnap.docs;
       if (weightDocs.isNotEmpty) {
         final DocumentReference weightDocRef = weightDocs.first.reference;
-        await weightDocRef.update({'weight': weight, 'time': Timestamp.fromDate(now)});
+        await weightDocRef
+            .update({'weight': weight, 'time': Timestamp.fromDate(now)});
       } else {
-        await weightCollection.add({'weight': weight, 'time': Timestamp.fromDate(now)});
+        await weightCollection
+            .add({'weight': weight, 'time': Timestamp.fromDate(now)});
       }
       setState(() {
         _currentWeight = weight;
@@ -114,6 +117,18 @@ class _Enter_WeightState extends State<Enter_Weight> {
       );
       _loadWeightData();
     }
+  }
+
+  List<charts.Series<WeightData, DateTime>> _createChartSeries() {
+    return [
+      charts.Series<WeightData, DateTime>(
+        id: 'Weight',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (WeightData data, _) => data.time,
+        measureFn: (WeightData data, _) => data.weight,
+        data: _weightDataList,
+      ),
+    ];
   }
 
   @override
@@ -137,75 +152,104 @@ class _Enter_WeightState extends State<Enter_Weight> {
         title: Text('BodyWeight', style: TextStyle(fontSize: 15)),
         titleSpacing: -13,
         actions: [
-          ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/bodymeasurements');
-              },
-              style: ElevatedButton.styleFrom(
+          SizedBox(
+            width: 160,
+            child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/bodymeasurements');
+                },
+                style: ElevatedButton.styleFrom(
                   minimumSize: Size(40, 20),
-                  primary:Colors.black,
-                  elevation: 0),
-              icon: Icon(Icons.add_sharp, size: 15),
-              label: Text('Body Measurements', style: TextStyle(fontSize: 12))),
-        
+                  primary: Colors.black,
+                ),
+                icon:
+                    Icon(Icons.boy_rounded, size: 20, color: Color(0xff45B39D)),
+                label: Text('Measurements',
+                    style: TextStyle(fontSize: 15, color: Color(0xff45B39D)))),
+          ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Current Weight', style: TextStyle(fontSize: 25, color: Colors.white)),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                SizedBox(
-                  width: 120,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 15,
+          ),
+          Container(
+            margin: EdgeInsets.all(10),
+            color: Color.fromARGB(255, 49, 49, 49),
+            child: Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 300,
+                      child: charts.TimeSeriesChart(
+                        _createChartSeries(),
+                        animate: true,
+                        dateTimeFactory: const charts.LocalDateTimeFactory(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.all(10),
+                color: Color.fromARGB(255, 49, 49, 49),
+                child: SizedBox(
+                  width: 280,
+                  height: 40,
                   child: TextField(
                     controller: _weightController,
-                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        TextInputType.numberWithOptions(decimal: true),
                     decoration: InputDecoration(
-                      hintText: 'Enter weight',
-                      hintStyle: TextStyle(fontSize: 16, color: Colors.grey),
+                      hintText: 'Log daily body weight',
+                      hintStyle: TextStyle(fontSize: 13, color: Colors.white),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 49, 49, 49),
+                        ),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
+                        borderSide: BorderSide(color: Color(0xff45B39D)),
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => _handleSubmit(context),
-                  child: Text('Save'),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Text('Weight History', style: TextStyle(fontSize: 25, color: Colors.white)),
-            SizedBox(height: 10),
-            Expanded(
-              child: SingleChildScrollView(
-                child: DataTable(
-                  columns: [
-                    DataColumn(label: Text('Date')),
-                    DataColumn(label: Text('Weight (kg)')),
-                  ],
-                  rows: _weightDataList.map((data) {
-                    return DataRow(cells: [
-                      DataCell(Text(DateFormat('EEE, MMM d, y').format(data.time))),
-                      DataCell(Text(data.weight.toString())),
-                    ]);
-                  }).toList(),
-                ),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _handleSubmit(context),
+                child: Text('Save'),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Expanded(
+            child: SingleChildScrollView(
+              child: DataTable(
+                columns: [
+                  DataColumn(label: Text('Date')),
+                  DataColumn(label: Text('Weight (kg)')),
+                ],
+                rows: _weightDataList.map((data) {
+                  return DataRow(cells: [
+                    DataCell(
+                        Text(DateFormat('EEE, MMM d, y').format(data.time))),
+                    DataCell(Text(data.weight.toString())),
+                  ]);
+                }).toList(),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

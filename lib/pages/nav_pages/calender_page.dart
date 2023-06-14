@@ -150,28 +150,13 @@ class _Calender_pageState extends State<Calender_page> {
                      IconButton(onPressed: (){
                        Navigator.pushNamed(context, '/enter_nutrition');
                      }
-                    , icon: Icon(Icons.restaurant_menu_outlined,color: Colors.white,size: 30,))
+                    , icon: Icon(Icons.restaurant_menu_outlined,color: Colors.white,size: 30,)),
+                       IconButton(onPressed: (){
+                       Navigator.pushNamed(context, '/bodymeasurements');
+                     }
+                    , icon: Icon(Icons.boy_rounded,color: Colors.white,size: 30,)),
                   ],
                 ),
-              ),
-              Container(
-                  margin: EdgeInsets.all(3),
-                decoration: BoxDecoration(
-             borderRadius: BorderRadius.circular(10),
-             color:Color.fromARGB(255, 48, 50, 51),
-           ),
-                padding: EdgeInsets.all(5),
-                child: ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, '/excrsise');
-                },
-                 style: ButtonStyle (
-                   minimumSize: MaterialStateProperty.all(Size(380, 40)),
-                   backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
-                   padding: MaterialStateProperty.all(EdgeInsets.all(10)),
-                   shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(10))),
-                 ),
-                 child:Text("Add Exercise", style: TextStyle(fontSize: 18),),
-               ),
               ),
         ],
         )
