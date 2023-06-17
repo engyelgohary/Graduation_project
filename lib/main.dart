@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         '/progressPhoto': (context) => const ProgressPhoto(),
         '/Camera': (context) => const Camera(),
         '/enter_weight': (context) => const Enter_Weight(),
-        '/enter_nutrition': (context) => const Enter_Nut(),
+        '/enter_nutrition': (context) => const EnterNutrition(),
         '/chat': (context) => const chatPage(),
       },
       home: Login(),
