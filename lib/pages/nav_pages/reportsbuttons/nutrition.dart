@@ -47,75 +47,65 @@ class _NutState extends State<Nut> {
           title: Text('Nutrition',style: TextStyle(fontSize:16 ,),),
           titleSpacing: -13,
       ),
-         body: Column(
-           children: [
-         
-             Container(
+         body: Container(
        color: Color.fromARGB(255, 32, 32, 32),
         child: StreamBuilder<QuerySnapshot>(
-              stream: _stream,
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
+          stream: _stream,
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
 
-                final List<DataRow> rows = snapshot.data!.docs.map((DocumentSnapshot document) {
-                  final Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                  final int protein = data['protein'] ?? 0;
-                  final int carbs = data['carbs'] ?? 0;
-                  final int fat = data['fat'] ?? 0;
-                  final int calories = data['calories'];
-                  return DataRow(
-                    cells: [
-                      DataCell(Text(data['date'],style: TextStyle(
-                                      color: Colors.grey,))),
-                      DataCell(Text('$protein',style: TextStyle(
-                                      color: Colors.grey,))),
-                      DataCell(Text('$carbs',style: TextStyle(
-                                      color: Colors.grey,))),
-                      DataCell(Text('$fat',style: TextStyle(
-                                      color: Colors.grey,))),
-                      DataCell(Text('$calories',style: TextStyle(
-                                      color: Colors.grey,))),
+            final List<DataRow> rows = snapshot.data!.docs.map((DocumentSnapshot document) {
+              final Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+              final int protein = data['protein'] ?? 0;
+              final int carbs = data['carbs'] ?? 0;
+              final int fat = data['fat'] ?? 0;
+              final int calories = data['calories'];
+              return DataRow(
+                cells: [
+                  DataCell(Text(data['date'],style: TextStyle(
+                                  color: Colors.grey,))),
+                  DataCell(Text('$protein',style: TextStyle(
+                                  color: Colors.grey,))),
+                  DataCell(Text('$carbs',style: TextStyle(
+                                  color: Colors.grey,))),
+                  DataCell(Text('$fat',style: TextStyle(
+                                  color: Colors.grey,))),
+                  DataCell(Text('$calories',style: TextStyle(
+                                  color: Colors.grey,))),
+                ],
+              );
+            }).toList();
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+                child: Expanded(
+                  child: DataTable(
+                    columns: [
+                      DataColumn(label: Text('Date',style: TextStyle(
+                                  color: Colors.white,))),
+                      DataColumn(label: Text('Protein',style: TextStyle(
+                                  color: Colors.white,))),
+                      DataColumn(label: Text('Carbs',style: TextStyle(
+                                  color: Colors.white,))),
+                      DataColumn(label: Text('Fat',style: TextStyle(
+                                  color: Colors.white,))),
+                      DataColumn(label: Text('Calories',style: TextStyle(
+                                  color: Colors.white,))),
                     ],
-                  );
-                }).toList();
-
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: DataTable(
-                            columns: [
-                              DataColumn(label: Text('Date',style: TextStyle(
-                                          color: Colors.white,))),
-                              DataColumn(label: Text('Protein',style: TextStyle(
-                                          color: Colors.white,))),
-                              DataColumn(label: Text('Carbs',style: TextStyle(
-                                          color: Colors.white,))),
-                              DataColumn(label: Text('Fat',style: TextStyle(
-                                          color: Colors.white,))),
-                              DataColumn(label: Text('Calories',style: TextStyle(
-                                          color: Colors.white,))),
-                            ],
-                            rows: rows,
-                          ),
-                        ),
-                      ],
-                    ),
-                  
-                );
-              },
+                    rows: rows,
+                  ),
+                ),
+              
+            );
+          },
         ),
       ),
-
-           ],
-         ),
     );
   }
 }
