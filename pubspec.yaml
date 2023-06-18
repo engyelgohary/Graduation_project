@@ -55,6 +55,7 @@ dependencies:
   firebase_messaging: ^14.6.3
   shared_preferences: ^2.1.2
   fl_chart: ^0.63.0
+  provider: ^6.0.5
 
 
 dev_dependencies:

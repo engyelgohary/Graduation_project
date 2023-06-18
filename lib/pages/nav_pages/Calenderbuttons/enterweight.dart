@@ -75,49 +75,66 @@ class _Enter_WeightState extends State<Enter_Weight> {
     }
   }
 
-  Future<void> _handleSubmit(BuildContext context) async {
-    final String weightString = _weightController.text.trim();
-    if (weightString.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your weight')),
-      );
-      return;
-    }
-    final double weight = double.tryParse(weightString) ?? 0.0;
-    if (weight <= 0.0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid weight')),
-      );
-      return;
-    }
-    final User? user = _auth.currentUser;
-    if (user != null) {
-      final CollectionReference weightCollection =
-          _firestore.collection('Athletes').doc(user.uid).collection('weight');
-      final DateTime now = DateTime.now();
-      final QuerySnapshot weightSnap = await weightCollection
-          .where('time',
-              isGreaterThan:
-                  Timestamp.fromDate(now.subtract(const Duration(days: 1))))
-          .get();
-      final List<QueryDocumentSnapshot> weightDocs = weightSnap.docs;
-      if (weightDocs.isNotEmpty) {
-        final DocumentReference weightDocRef = weightDocs.first.reference;
-        await weightDocRef
-            .update({'weight': weight, 'time': Timestamp.fromDate(now)});
-      } else {
-        await weightCollection
-            .add({'weight': weight, 'time': Timestamp.fromDate(now)});
-      }
-      setState(() {
-        _currentWeight = weight;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Weight saved')),
-      );
-      _loadWeightData();
-    }
+Future<void> _handleSubmit(BuildContext context) async {
+  final String weightString = _weightController.text.trim();
+  if (weightString.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter your weight')),
+    );
+    return;
   }
+  final double weight = double.tryParse(weightString) ?? 0.0;
+  if (weight <= 0.0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a valid weight')),
+    );
+    return;
+  }
+  final User? user = _auth.currentUser;
+  if (user != null) {
+    final CollectionReference weightCollection =
+        _firestore.collection('Athletes').doc(user.uid).collection('weight');
+    final DateTime now = DateTime.now();
+    final QuerySnapshot weightSnap = await weightCollection
+        .where('time', isEqualTo: Timestamp.fromDate(now))
+        .get();
+    if (weightSnap.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You have already signed weight data for this time.')),
+      );
+      return;
+    }
+    final QuerySnapshot lastWeightSnap = await weightCollection
+        .orderBy('time', descending: true)
+        .limit(1)
+        .get();
+    if (lastWeightSnap.docs.isNotEmpty) {
+      final DocumentSnapshot lastWeightDoc = lastWeightSnap.docs.first;
+      final DateTime lastTime = lastWeightDoc['time'].toDate();
+      if (now.year == lastTime.year &&
+          now.month == lastTime.month &&
+          now.day == lastTime.day) {
+        await lastWeightDoc.reference.update({'weight': weight});
+        setState(() {
+          _currentWeight = weight;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Weight data updated for today.')),
+        );
+        _loadWeightData();
+        return;
+      }
+    }
+    await weightCollection.add({'weight': weight, 'time': Timestamp.fromDate(now)});
+    setState(() {
+      _currentWeight = weight;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Weight data saved.')),
+    );
+    _loadWeightData();
+  }
+}
 
   List<charts.Series<WeightData, DateTime>> _createChartSeries() {
     return [

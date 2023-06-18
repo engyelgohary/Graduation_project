@@ -6,6 +6,7 @@ import 'package:flutterdatabasesalah/pages/SignUp/VerificationCode.dart';
 import 'package:flutterdatabasesalah/pages/login/login.dart';
 import 'package:flutterdatabasesalah/pages/nav_pages/main_page.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'pages/SignUp/signup.dart';
 import 'pages/login/forgetpass.dart';
 import 'pages/nav_pages/Calenderbuttons/camera.dart';
@@ -17,6 +18,9 @@ import 'pages/nav_pages/reportsbuttons/bodyweight.dart';
 import 'pages/nav_pages/reportsbuttons/nutrition.dart';
 import 'pages/nav_pages/reportsbuttons/progressphoto.dart';
 import 'pages/nav_pages/reportsbuttons/stepcount.dart';
+
+
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +34,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+     return ChangeNotifierProvider<NutritionDataModel>(
+      create: (context) => NutritionDataModel(),
+      child:
+    GetMaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
         '/Login': (context) => const Login(),
@@ -49,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => const chatPage(),
       },
       home: Login(),
+    )
     );
   }
 }

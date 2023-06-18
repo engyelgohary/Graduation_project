@@ -1,14 +1,31 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+
 
 class NutritionData {
   final String nutrient;
   final int value;
 
   NutritionData(this.nutrient, this.value);
+}
+
+class NutritionDataModel extends ChangeNotifier {
+  int protein = 0;
+  int carbs = 0;
+  int fat = 0;
+
+  void update(int protein, int carbs, int fat) {
+    this.protein = protein;
+    this.carbs = carbs;
+    this.fat = fat;
+    notifyListeners(); // Notify listeners of changes
+  }
 }
 
 class EnterNutrition extends StatefulWidget {
@@ -24,7 +41,7 @@ class _EnterNutritionState extends State<EnterNutrition> {
   final _carbsController = TextEditingController();
   final _fatController = TextEditingController();
   late List<NutritionData> _chartData = [];
-  late bool _hasSubmittedToday = false;
+  
 
   @override
   void dispose() {
@@ -37,83 +54,82 @@ class _EnterNutritionState extends State<EnterNutrition> {
   @override
   void initState() {
     super.initState();
-    addNutritionData();
-  }
+    _addNutritionData();
+      final model = Provider.of<NutritionDataModel>(context, listen: false);
+  _proteinController.text = model.protein.toString();
+  _carbsController.text = model.carbs.toString();
+  _fatController.text = model.fat.toString();
+}
+  
 
-  Future<void> addNutritionData() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final int protein = int.tryParse(_proteinController.text) ?? 0;
-      final int carbs = int.tryParse(_carbsController.text) ?? 0;
-      final int fat = int.tryParse(_fatController.text) ?? 0;
+Future<void> _addNutritionData() async {
+  if (_formKey.currentState?.validate() ?? false) {
+    final int protein = int.tryParse(_proteinController.text) ?? 0;
+    final int carbs = int.tryParse(_carbsController.text) ?? 0;
+    final int fat = int.tryParse(_fatController.text) ?? 0;
+   
+    int calculateCalories(int protein, int carbs, int fat) {
+  // Replace the formula with your own formula to calculate calories
+  final double proteinCalories = protein * 4.0;
+  final double carbsCalories = carbs * 4.0;
+  final double fatCalories = fat * 9.0;
+  final double totalCalories = proteinCalories + carbsCalories + fatCalories;
+  return totalCalories.round();
+}
+ final int calories = calculateCalories(protein, carbs, fat);
 
-      NutritionData proteinData = NutritionData('Protein', protein);
-      NutritionData carbsData = NutritionData('Carbs', carbs);
-      NutritionData fatData = NutritionData('Fat', fat);
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final String dateStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      final DocumentReference docRef = FirebaseFirestore.instance
+          .collection('nutritionData')
+          .doc(user.uid)
+          .collection('data')
+          .doc(dateStr);
+      final DocumentSnapshot doc = await docRef.get();
+      final Map<String, dynamic> data =
+          doc.exists ? doc.data() as Map<String, dynamic> : {};
+
+      final List<NutritionData> chartData = <NutritionData>[
+        NutritionData('Protein', (data['protein'] ?? 0) + protein),
+        NutritionData('Carbs', (data['carbs'] ?? 0) + carbs),
+        NutritionData('Fat', (data['fat'] ?? 0) + fat),
+      ];
+
+      await docRef.set({
+        'protein': chartData[0].value,
+        'carbs': chartData[1].value,
+        'fat': chartData[2].value,
+        'calories': calories,
+        'date': dateStr,
+        'timestamp': Timestamp.now(),
+      }, SetOptions(merge: true));
 
       setState(() {
-        _chartData = [proteinData, carbsData, fatData];
+        _chartData = chartData;
       });
 
-      // Add data to Firestore
-      final User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        final DocumentReference docRef = FirebaseFirestore.instance
-            .collection('nutritionData')
-            .doc(user.uid)
-            .collection('data')
-            .doc(today);
-        final DocumentSnapshot doc = await docRef.get();
-        if (doc.exists) {
-          // Data has already been submitted today
-          setState(() {
-            _hasSubmittedToday = true;
-          });
-          return;
-        }
-        await docRef.set({
-          'protein': protein,
-          'carbs': carbs,
-          'fat': fat,
-          'timestamp': Timestamp.now(),
-        });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Data saved successfully'),
+          duration: Duration(seconds: 2),
+        ),
+      );
 
-        // Update chart data
-        final DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
-        final String yesterdayStr = DateFormat('yyyy-MM-dd').format(yesterday);
-        final QuerySnapshot snapshot = await FirebaseFirestore.instance
-            .collection('nutritionData')
-            .doc(user.uid)
-            .collection('data')
-            .where('date', isEqualTo: yesterdayStr)
-            .get();
-        if (snapshot.size > 0) {
-          final DocumentSnapshot doc = snapshot.docs.first;
-          final Map<String, dynamic> dataMap =
-              doc.data() as Map<String, dynamic>;
-          setState(() {
-            _chartData = [
-              NutritionData('Protein', dataMap['protein']),
-              NutritionData('Carbs', dataMap['carbs']),
-              NutritionData('Fat', dataMap['fat']),
-            ];
-          });
-        }
-
-        // Show snackbar message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Data saved successfully'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
+      // Update the NutritionDataModel
+      final model = Provider.of<NutritionDataModel>(context, listen: false);
+      model.update(protein, carbs, fat);
     }
   }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ChangeNotifierProvider<NutritionDataModel>(
+  create: (context) => NutritionDataModel(),// Provide the NutritionDataModel
+    child:Scaffold(
       backgroundColor: Color.fromARGB(255, 16, 16, 16),
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -337,7 +353,7 @@ class _EnterNutritionState extends State<EnterNutrition> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: _hasSubmittedToday ? null : addNutritionData,
+                    onPressed: _addNutritionData,
                   ),
                 ),
                 SizedBox(height: 20),
@@ -380,6 +396,7 @@ class _EnterNutritionState extends State<EnterNutrition> {
           ),
         ),
       ),
+    ),
     );
   }
 }
