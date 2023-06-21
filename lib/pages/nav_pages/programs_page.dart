@@ -2,13 +2,27 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../../models/Day.dart';
 import '../../models/Program.dart';
 import '../../models/Workout.dart';
 import '../../models/block.dart';
 import '../../models/set.dart';
+
+openBrowserTab(String link) async {
+  if (link == "") {
+    Fluttertoast.showToast(msg: "No Link Found");
+  } else {
+    await FlutterWebBrowser.openWebPage(
+      customTabsOptions:
+          const CustomTabsOptions(colorScheme: CustomTabsColorScheme.dark),
+      url: link,
+    );
+  }
+}
 
 Future<List<Workout>> getWorkout() async {
   try {
@@ -296,7 +310,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           height: 10,
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            openBrowserTab(model.link);
+                          },
                           child: Text(
                             model.link,
                             textAlign: TextAlign.center,
