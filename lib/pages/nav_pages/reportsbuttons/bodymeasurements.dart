@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
-class BodyM extends StatelessWidget {
+class BodyM extends StatefulWidget {
   const BodyM({super.key});
 
+  @override
+  State<BodyM> createState() => _BodyMState();
+}
+
+class _BodyMState extends State<BodyM> {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +30,28 @@ class BodyM extends StatelessWidget {
           title: Text('Measures',style: TextStyle(fontSize:16 ,),),
           titleSpacing: -13,
       ),
-      
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            
+            children:[
+               SizedBox(
+                      height: 15,
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/measure');
+                        },
+                        child: Text(
+                          'How to measure',
+                          style: TextStyle(color:(Color(0xff45B39D)),fontSize: 18,
+                        )),
+                    )
+            ]
+          ),
+        )
+        ),
     );
   }
 }
