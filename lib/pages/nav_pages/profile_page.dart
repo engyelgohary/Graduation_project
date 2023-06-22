@@ -1,14 +1,11 @@
 // ignore_for_file: unused_local_variable, prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterdatabasesalah/pages/SignUp/Services/auth.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../login/login.dart';
 import 'package:path_provider/path_provider.dart';
 

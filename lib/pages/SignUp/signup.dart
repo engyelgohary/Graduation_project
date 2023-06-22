@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, unused_field, no_leading_underscores_for_local_identifiers, avoid_print, use_build_context_synchronously, prefer_const_literals_to_create_immutables, deprecated_member_use
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterdatabasesalah/pages/nav_pages/main_page.dart';
@@ -22,21 +21,7 @@ class _SignupState extends State<Signup> {
   final List<TextEditingController> _controllers =
       List.generate(6, (String) => TextEditingController());
 
-  
-Future<String?> checkVerificationCode(String code) async {
-  final snapshot = await FirebaseFirestore.instance
-      .collection('Athletes')
-      .where('randomCode', isEqualTo: code)
-      .get();
 
-  if (snapshot.docs.isNotEmpty) {
-    // If there is a matching document, return its ID
-    return snapshot.docs.first.id;
-  } else {
-    // If there is no matching document, return null
-    return null;
-  }
-}
   String _email = '';
   String _password = '';
   String _firstName = '';
@@ -45,7 +30,6 @@ Future<String?> checkVerificationCode(String code) async {
   String _bench = '';
   String _deadlift = '';
   String _confrimpassword = '';
-
 
   pickImage(ImageSource source) async {
     final ImagePicker _imagePicker = ImagePicker();
@@ -75,7 +59,7 @@ Future<String?> checkVerificationCode(String code) async {
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             _emailPage(),
-             _codePage(),
+            _codePage(),
             _passwordPage(),
             _namePage(),
             _liftsPage(),
@@ -84,8 +68,6 @@ Future<String?> checkVerificationCode(String code) async {
       ),
     );
   }
-
-
 
   Widget _emailPage() {
     return Scaffold(
@@ -238,129 +220,146 @@ Future<String?> checkVerificationCode(String code) async {
     );
   }
 
-Widget _codePage() {
+  Widget _codePage() {
     return Scaffold(
       backgroundColor: Colors.black,
-     body: SingleChildScrollView(
-       child: SafeArea(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             children: [
               SizedBox(
                 height: 150,
               ),
               Center(
-                child: Text('Enter Verification code',style: TextStyle(
-                  fontSize: 25,color: Colors.white,
-                ),
-                //textAlign: TextAlign.center,
+                child: Text(
+                  'Enter Verification code',
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.white,
+                  ),
+                  //textAlign: TextAlign.center,
                 ),
               ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Text('Enter the code sent to your email',style: TextStyle(
-                      fontSize: 20,color: Colors.grey,
-                    ),),
-                    SizedBox(
-                      height: 140,
-                    ),
-                  Container(
-                    padding: EdgeInsets.all(10),
-              margin: EdgeInsets.all(10),
-             decoration: BoxDecoration(
-               borderRadius: BorderRadius.circular(15),
-               color:Color.fromARGB(255, 48, 50, 51),
-             ),
-               child: Column(
-                 children: [
-                 Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(
-                          6,
-                          (index) => SizedBox(
-                            height: 40,
-                            width: 40,
-                            child: TextFormField(
-                                 validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter code';
-                }
-                return null;
-              },
-                              controller: _controllers[index],
-                              onChanged: (value) {
-                                if (value.length == 1) {
-                                  FocusScope.of(context).nextFocus();
-                                }
-                              },
-                              style: Theme.of(context).textTheme.headline6,
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              decoration: InputDecoration(
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 32, 33, 34)),
-                                ),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                'Enter the code sent to your email',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(
+                height: 140,
+              ),
+              Container(
+                padding: EdgeInsets.all(10),
+                margin: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Color.fromARGB(255, 48, 50, 51),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(
+                        6,
+                        (index) => SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: TextFormField(
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter code';
+                              }
+                              return null;
+                            },
+                            controller: _controllers[index],
+                            onChanged: (value) {
+                              if (value.length == 1) {
+                                FocusScope.of(context).nextFocus();
+                              }
+                            },
+                            style: Theme.of(context).textTheme.headline6,
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 32, 33, 34)),
                               ),
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(1),
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
                             ),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(1),
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                           ),
                         ),
-                 ),
-                   SizedBox(
-                  height: 15,
-                 ),
-                 ElevatedButton(   onPressed: () async {
-    final verificationCode = _controllers.map((controller) => controller.text).join();
-    final athleteId = await checkVerificationCode(verificationCode);
-    if (athleteId != null) {
-       print("Matching document found with ID: $athleteId");
-      // Navigate to the next page
-      _pageController.nextPage(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      // Show error message
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Invalid code'),
-          content: Text('The code you entered is invalid. Please try again.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
-  },
-                 style: ButtonStyle (
-                  minimumSize: MaterialStateProperty.all(Size(380, 40)),
-                  backgroundColor: MaterialStateProperty.all(Color(0xff45B39D)),
-                  padding: MaterialStateProperty.all(EdgeInsets.all(10)),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(10))),
-                 ),
-                 child:Text("Next", style: TextStyle(fontSize: 15),),
-                 ),
-     
-                 SizedBox(
-                  height: 15,
-                 )
-                 ],
-               ),
+                      ),
                     ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final verificationCode = _controllers
+                            .map((controller) => controller.text)
+                            .join();
+                        final athleteId =
+                            await _authService.checkVerificationCodeAndUpdate(verificationCode,_email,'','','','','','',);
+                        if (athleteId != null) {
+                          print("Matching document found with ID: $athleteId");
+                          // Navigate to the next page
+                          _pageController.nextPage(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        } else {
+                          // Show error message
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Invalid code'),
+                              content: Text(
+                                  'The code you entered is invalid. Please try again.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all(Size(380, 40)),
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xff45B39D)),
+                        padding: MaterialStateProperty.all(EdgeInsets.all(10)),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                      ),
+                      child: Text(
+                        "Next",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    )
+                  ],
+                ),
+              ),
             ],
           ),
-                  ),
-     ),
-        );
+        ),
+      ),
+    );
   }
+
   Widget _passwordPage() {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -558,7 +557,7 @@ Widget _codePage() {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-       automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.black,
         flexibleSpace: SafeArea(
           child: Container(
@@ -982,12 +981,14 @@ Widget _codePage() {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                    
+                        String code=_controllers
+                            .map((controller) => controller.text).join();
+                           
                         if (_formKey.currentState!.validate()) {
                           try {
-                            await _authService.registerUser(_email, _password);
-                            await _authService.saveUserInfo(_firstName,
-                                _lastName, _squat, _bench, _deadlift, _image!);
+
+                            String? uid = await _authService.registerUser(_email, _password);
+                             await _authService.checkVerificationCodeAndUpdate(code,uid,_email,_firstName,_lastName,_squat,_bench,_deadlift);
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                 builder: (context) => MainPage(),
