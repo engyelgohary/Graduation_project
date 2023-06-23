@@ -178,6 +178,38 @@ class _DetailsScreenState extends State<DetailsScreen> {
     }
   }
 
+// SetExersice set = SetExersice(
+  //   id: '2',
+  //   workoutId:
+  //       'f7f9c0a0-10b1-11ee-a2a8-23b6abbced55',
+  //   reps: '6',
+  //   intensity: '70%',
+  //   load: '75kg',
+  //   RPE: '',
+  //   done: false,
+  //   link: '',
+  //   notes:
+  //       'Work up to 75% and perform 2 sets of 6-8 @8',
+  // );
+  // await FirebaseFirestore.instance
+  //     .collection('workout')
+  //     .doc(
+  //         "f7f9c0a0-10b1-11ee-a2a8-23b6abbced55")
+  //     .update({
+  //   "data": FieldValue.arrayUnion([
+  //     {
+  //       "id": set.id,
+  //       "workoutId": set.workoutId,
+  //       "reps": set.reps,
+  //       "notes": set.notes,
+  //       "RPE": set.RPE,
+  //       "link": set.link,
+  //       "intensity": set.intensity,
+  //       "load": set.load,
+  //       "done": set.done,
+  //     }
+  //   ])
+  // });
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -188,7 +220,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         elevation: 0,
       ),
       body: isLoading == true
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
               color: Color(0xff5bc500),
             ))
@@ -197,68 +229,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: workout.isEmpty
-                    ? Center(
-                        child: Column(
-                          children: [
-                            Text(
-                              'No workouts added yet!',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            ElevatedButton(
-                                onPressed: () async {
-                                  // SetExersice set = SetExersice(
-                                  //   id: '2',
-                                  //   workoutId:
-                                  //       'f7f9c0a0-10b1-11ee-a2a8-23b6abbced55',
-                                  //   reps: '6',
-                                  //   intensity: '70%',
-                                  //   load: '75kg',
-                                  //   RPE: '',
-                                  //   done: false,
-                                  //   link: '',
-                                  //   notes:
-                                  //       'Work up to 75% and perform 2 sets of 6-8 @8',
-                                  // );
-                                  // await FirebaseFirestore.instance
-                                  //     .collection('workout')
-                                  //     .doc(
-                                  //         "f7f9c0a0-10b1-11ee-a2a8-23b6abbced55")
-                                  //     .update({
-                                  //   "data": FieldValue.arrayUnion([
-                                  //     {
-                                  //       "id": set.id,
-                                  //       "workoutId": set.workoutId,
-                                  //       "reps": set.reps,
-                                  //       "notes": set.notes,
-                                  //       "RPE": set.RPE,
-                                  //       "link": set.link,
-                                  //       "intensity": set.intensity,
-                                  //       "load": set.load,
-                                  //       "done": set.done,
-                                  //     }
-                                  //   ])
-                                  // });
-                                },
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Color(0xff5bc500))),
-                                child: Text(
-                                  'Add Workout',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    // fontSize: 30,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ))
-                          ],
+                    ? const Center(
+                        child: Text(
+                          'No workouts added yet!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 25,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       )
                     : ListView(
@@ -270,7 +248,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   children: [
                                     Text(
                                       'Workout ${index + 1}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
@@ -389,12 +367,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     children: [
                       Text(
                         isEdit[indexx] == false ? 'Edit' : 'Done',
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.w600),
                       ),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       Icon(
                           isEdit[indexx] == false
                               ? Icons.edit_square
@@ -460,7 +438,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('*',
+                const Text('*',
                     style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
@@ -493,7 +471,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             borderSide: BorderSide(color: Color(0xff5bc500)),
                           ))),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Expanded(
