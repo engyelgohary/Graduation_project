@@ -1,4 +1,4 @@
-class setExersice {
+class SetExersice {
   String id;
   String workoutId;
   String reps;
@@ -9,7 +9,7 @@ class setExersice {
   String link;
   String notes;
 
-  setExersice({
+  SetExersice({
     required this.id,
     required this.workoutId,
     required this.reps,
@@ -35,8 +35,8 @@ class setExersice {
     };
   }
 
-  factory setExersice.fromJson(Map<String, dynamic> json) {
-    return setExersice(
+  factory SetExersice.fromJson(Map<String, dynamic> json) {
+    return SetExersice(
       id: json['id'],
       workoutId: json['workoutId'],
       reps: json['reps'],
