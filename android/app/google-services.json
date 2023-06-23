@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "31142014468",
+    "firebase_url": "https://powerlifting-application-11263-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "powerlifting-application-11263",
     "storage_bucket": "powerlifting-application-11263.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "31142014468-vkjhp1hdt0euqppe7hepudev37t76i2m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutterdatabasesalah",
+            "certificate_hash": "7d24fcaff79df0849b31bdc1beade98e508eaa62"
+          }
+        },
         {
           "client_id": "31142014468-7km838b8ftbrl53mi3gu1bnhh45k2gsa.apps.googleusercontent.com",
           "client_type": 3
