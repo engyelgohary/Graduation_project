@@ -304,11 +304,12 @@ class _SignupState extends State<Signup> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                        Uint8List _image = Uint8List(0);
                         final verificationCode = _controllers
                             .map((controller) => controller.text)
                             .join();
                         final athleteId =
-                            await _authService.checkVerificationCodeAndUpdate(verificationCode,_email,'','','','','','',);
+                            await _authService.checkVerificationCodeAndUpdate(verificationCode,_email,'','','','','','', _image);
                         if (athleteId != null) {
                           print("Matching document found with ID: $athleteId");
                           // Navigate to the next page
@@ -988,7 +989,7 @@ class _SignupState extends State<Signup> {
                           try {
 
                             String? uid = await _authService.registerUser(_email, _password);
-                             await _authService.checkVerificationCodeAndUpdate(code,uid,_email,_firstName,_lastName,_squat,_bench,_deadlift);
+                             await _authService.checkVerificationCodeAndUpdate(code,uid,_email,_firstName,_lastName,_squat,_bench,_deadlift,_image!);
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                 builder: (context) => MainPage(),

@@ -1,3 +1,5 @@
+// ignore_for_file: body_might_complete_normally_nullable
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -7,7 +9,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   
 
@@ -57,7 +58,10 @@ Future<String?> checkVerificationCodeAndUpdate(
   String squat,
   String bench,
   String deadlift,
+  Uint8List file,
 ) async {
+   final user = _auth.currentUser;
+    String imageUrl = await uploadImageTOStorage('${user?.uid}/athletePic', file);
   final snapshot = await FirebaseFirestore.instance
       .collection('Athletes')
       .where('randomCode', isEqualTo: code)
@@ -78,6 +82,8 @@ Future<String?> checkVerificationCodeAndUpdate(
       'squat': squat,
       'bench': bench,
       'deadlift': deadlift,
+      'imageLink': imageUrl,
+      
     };
 
     // Create a new document with the new ID (Firebase-generated UID)
