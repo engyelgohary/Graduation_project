@@ -9,8 +9,9 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  
 
-  Future<String> uploadImageTOStorage(String athletePic, Uint8List file) async {
+  Future<String> uploadImageTOStorage(String athletePic, Uint8List file,) async {
     try {
       final user = _auth.currentUser;
       if (user != null) {
@@ -31,58 +32,121 @@ class AuthService {
     }
   }
 
-  Future<void> registerUser(String email, String password) async {
-    try {
-      await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      print('Registration failed: ${e.toString()}');
-// Handle registration failure
-    }
-  }
+Future<String?> registerUser(String email, String password) async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-  Future<void> saveUserInfo(
-    String firstName,
-    String lastName,
-    String squat,
-    String bench,
-    String deadlift,
-    Uint8List file,
-  ) async {
-    try {
-      final user = _auth.currentUser;
-      String imageUrl =
-          await uploadImageTOStorage('${user?.uid}/athletePic', file);
-      if (user != null) {
-        await _db.collection('Athletes').doc(user.uid).set({
-          'firstName': firstName,
-          'lastName': lastName,
-          'squat': squat,
-          'bench': bench,
-          'deadlift': deadlift,
-          'imageLink': imageUrl,
-        });
-        FirebaseAuth.instance.idTokenChanges().listen((User? user) {
-          if (user != null) {
-            user.getIdToken().then((String idToken) {
-              // Use the ID token to authenticate the user with other Firebase services and APIs
-              print('User ID token: $idToken');
-            });
-          } else {
-            print('User is signed out');
-          }
-        });
-      } else {
-        throw Exception('User is not signed in');
-      }
-    } catch (error, stackTrace) {
-      print('Error saving user info: $error');
-      print(stackTrace);
-      // Handle error saving user info
-    }
+    return userCredential.user?.uid;  // Return the UID
+
+  } catch (e) {
+    print('Registration failed: ${e.toString()}');
+    // Handle registration failure
+    return null;
   }
+}
+
+Future<String?> checkVerificationCodeAndUpdate(
+  String code,
+  String ? uid,  // The Firebase-generated UID
+  String email,
+  String firstName,
+  String lastName,
+  String squat,
+  String bench,
+  String deadlift,
+) async {
+  final snapshot = await FirebaseFirestore.instance
+      .collection('Athletes')
+      .where('randomCode', isEqualTo: code)
+      .get();
+
+  if (snapshot.docs.isNotEmpty) {
+    // Get the old document's data
+    Map<String, dynamic> oldData = snapshot.docs.first.data();
+
+    // Save the fields you want to keep from the old document
+    Map<String, dynamic> dataToKeep = {
+      'coachId': oldData['coachId'],
+      'randomCode': oldData['randomCode'],
+      // include new fields
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'squat': squat,
+      'bench': bench,
+      'deadlift': deadlift,
+    };
+
+    // Create a new document with the new ID (Firebase-generated UID)
+    // using both the data to keep and the new data
+    await FirebaseFirestore.instance.collection('Athletes')
+        .doc(uid)
+        .set(dataToKeep);
+
+    // Delete the old document
+    await FirebaseFirestore.instance.collection('Athletes')
+        .doc(snapshot.docs.first.id)
+        .delete();
+         return snapshot.docs.first.id.toString();
+  } else {
+    // If there is no matching document, do nothing
+    print('No document with that code found');
+  }
+}
+
+// Future<void> saveUserInfo(
+  // String firstName,
+  // String lastName,
+  // String squat,
+  // String bench,
+  // String deadlift,
+//   Uint8List file,
+//   String verificationCode,
+// ) async {
+//   try {
+    // final user = _auth.currentUser;
+    // String imageUrl = await uploadImageTOStorage('${user?.uid}/athletePic', file);
+    // if (user != null) {
+//       // Check if the document has the verification code and update it with the user's information
+//       DocumentSnapshot? snapshot = await checkVerificationCodeAndUpdate(verificationCode);
+//       if (snapshot != null &&
+//           snapshot.data() != null &&
+//           (snapshot.data() as Map<String, dynamic>)['randomCode'] == verificationCode) {
+//         // update the document with the user's information
+//         // create a subcollection named "uid" and save the user's UID in it
+        // await _db.collection('Athletes').doc(snapshot.id).collection('uid').doc(user.uid).set({
+        //    'firstName': firstName,
+        //   'lastName': lastName,
+        //   'squat': squat,
+        //   'bench': bench,
+        //   'deadlift': deadlift,
+        //   'imageLink': imageUrl,
+        // });
+//       } else {
+//         throw Exception('Verification code is not valid');
+//       }
+//       FirebaseAuth.instance.idTokenChanges().listen((User? user) {
+//         if (user != null) {
+//           user.getIdToken().then((String idToken) {
+//             // Use the ID token to authenticate the user with other Firebase services and APIs
+//             print('User ID token: $idToken');
+//           });
+//         } else {
+//           print('User is signed out');
+//         }
+//       });
+//     } else {
+//       throw Exception('User is not signed in');
+//     }
+//   } catch (error, stackTrace) {
+//     print('Error saving user info: $error');
+//     print(stackTrace);
+//     // Handle error saving user info
+//   }
+// }
 
   Future<bool> isUserSignedUp(String email) async {
     try {
@@ -95,9 +159,6 @@ class AuthService {
     }
   }
 
-  Future<void> signOut() async {
-    await _auth.signOut();
-  }
 
   Future<void> updateUserProfile(String firstName, String lastName,
       String squat, String bench, String deadlift, File? image) async {

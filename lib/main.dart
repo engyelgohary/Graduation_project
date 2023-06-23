@@ -2,9 +2,9 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterdatabasesalah/pages/SignUp/VerificationCode.dart';
 import 'package:flutterdatabasesalah/pages/login/login.dart';
 import 'package:flutterdatabasesalah/pages/nav_pages/main_page.dart';
+import 'package:flutterdatabasesalah/pages/nav_pages/reportsbuttons/howmeasure.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'pages/SignUp/signup.dart';
@@ -41,7 +41,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/Login': (context) => const Login(),
-        '/verification code': (context) => const Code(),
         '/forgetpass': (context) => const Forget(),
         '/signup': (context) => const Signup(),
         '/main_page': (context) => const MainPage(),
@@ -54,6 +53,7 @@ class MyApp extends StatelessWidget {
         '/enter_weight': (context) => const Enter_Weight(),
         '/enter_nutrition': (context) => const EnterNutrition(),
         '/chat': (context) => const chatPage(),
+        '/measure': (context) => const Measure(),
       },
       home: Login(),
     )
