@@ -164,13 +164,30 @@ class _ProgramViewState extends State<ProgramView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color.fromARGB(255, 16, 16, 16),
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+        backgroundColor: Colors.black,
+        flexibleSpace: SafeArea(
+            child: Container(
+          padding: EdgeInsets.only(top: 15),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image(
+                image: AssetImage('images/logo.png'),
+                height: 40,
+              ),
+            ],
+          ),
+        )),
+        title: Text(
+          'Program',
+          style: TextStyle(fontSize: 20),
+          maxLines: 2,
         ),
-        backgroundColor: Color(0xFF09b599),
+        titleSpacing: 7,
+        
       ),
       body: StreamBuilder<List<CardData>>(
         stream: getPrograms(user!.uid),
@@ -190,191 +207,202 @@ class _ProgramViewState extends State<ProgramView> {
                   return Card();
                 } else {
                   final programId = cardList[index].id;
-
-                  return Card(
-                    child: ExpansionTile(
-                      collapsedBackgroundColor: Colors.black,
-                      backgroundColor: Colors.black,
-                      title: Text(cardList[index].name),
-                      children: <Widget>[
-                        StreamBuilder<List<BlockData>>(
-                          stream: getBlocks(programId),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<BlockData>> snapshot) {
-                            if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else {
-                              final blockList = snapshot.data ?? [];
-
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: blockList.length,
-                                itemBuilder: (context, index) {
-                                  final blockId = blockList[index].id;
-
-                                  return ExpansionTile(
-                                    backgroundColor:
-                                        Color.fromARGB(255, 111, 111, 111),
-                                    title: Text(blockList[index].name),
-                                    children: <Widget>[
-                                      // day stream
-
-                                      StreamBuilder<List<DayData>>(
-                                        stream: getDays(blockId),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<List<DayData>>
-                                                snapshot) {
-                                          if (snapshot.hasError) {
-                                            return Text(
-                                                'Error: ${snapshot.error}');
-                                          } else if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return CircularProgressIndicator();
-                                          } else {
-                                            final dayList = snapshot.data ?? [];
-
-                                            return ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: dayList.length,
-                                              itemBuilder: (context, index) {
-                                                final dayId = dayList[index].id;
-
-                                                return ExpansionTile(
-                                                  backgroundColor:
-                                                      Color.fromARGB(
-                                                          255, 61, 61, 61),
-                                                  title:
-                                                      Text(dayList[index].name),
-                                                  children: <Widget>[
-                                                    // workoutData
-
-                                                    StreamBuilder<
-                                                        List<WorkoutData>>(
-                                                      stream:
-                                                          getWorkouts(dayId),
-                                                      builder: (BuildContext
-                                                              context,
-                                                          AsyncSnapshot<
-                                                                  List<
-                                                                      WorkoutData>>
-                                                              snapshot) {
-                                                        if (snapshot.hasError) {
-                                                          print(
-                                                              'Error in getWorkouts: ${snapshot.error}');
-                                                          return Text(
-                                                              'Error: ${snapshot.error}');
-                                                        } else if (snapshot
-                                                                .connectionState ==
-                                                            ConnectionState
-                                                                .waiting) {
-                                                          return CircularProgressIndicator();
-                                                        } else {
-                                                          final workoutList =
-                                                              snapshot.data ??
-                                                                  [];
-
-                                                          return ListView
-                                                              .builder(
-                                                            shrinkWrap: true,
-                                                            physics:
-                                                                NeverScrollableScrollPhysics(),
-                                                            itemCount:
-                                                                workoutList
-                                                                    .length,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              final workoutId =
-                                                                  workoutList[
-                                                                          index]
-                                                                      .id;
-
-                                                              return Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        8.0),
-                                                                child:
-                                                                    ExpansionTile(
-                                                                  backgroundColor:
-                                                                      Color.fromARGB(
-                                                                          255,
-                                                                          41,
-                                                                          41,
-                                                                          41),
-                                                                  title: Text(
-                                                                      workoutList[index]
-                                                                              .exerciseName ??
-                                                                          ''),
-                                                                  children: <Widget>[
-                                                                    StreamBuilder<
+                  return Container(
+                    margin: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                         SizedBox(height: 10,),
+                        Text('That is your program ',style: TextStyle(color: Color(0xff45B39D),fontSize: 23,),),
+                        SizedBox(height: 10,),
+                        Card(
+                          child: ExpansionTile(
+                            collapsedBackgroundColor: Color.fromARGB(255, 48, 50, 51),
+                            backgroundColor:  Color.fromARGB(255, 48, 50, 51),
+                             leading: Icon(Icons.sports_gymnastics,color: Color(0xff45B39D) ,),
+                             
+                            title: Text('Program Name : ${cardList[index].name}',style: TextStyle(color: Colors.white),),
+                            children: <Widget>[
+                              StreamBuilder<List<BlockData>>(
+                                stream: getBlocks(programId),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<BlockData>> snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else {
+                                    final blockList = snapshot.data ?? [];
+                  
+                                    return ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: blockList.length,
+                                      itemBuilder: (context, index) {
+                                        final blockId = blockList[index].id;
+                  
+                                        return ExpansionTile(
+                                          backgroundColor:
+                                              Color.fromARGB(255, 111, 111, 111),
+                                          title: Text(blockList[index].name),
+                                          children: <Widget>[
+                                            // day stream
+                  
+                                            StreamBuilder<List<DayData>>(
+                                              stream: getDays(blockId),
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot<List<DayData>>
+                                                      snapshot) {
+                                                if (snapshot.hasError) {
+                                                  return Text(
+                                                      'Error: ${snapshot.error}');
+                                                } else if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return CircularProgressIndicator();
+                                                } else {
+                                                  final dayList = snapshot.data ?? [];
+                  
+                                                  return ListView.builder(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        NeverScrollableScrollPhysics(),
+                                                    itemCount: dayList.length,
+                                                    itemBuilder: (context, index) {
+                                                      final dayId = dayList[index].id;
+                  
+                                                      return ExpansionTile(
+                                                        backgroundColor:
+                                                            Color.fromARGB(
+                                                                255, 61, 61, 61),
+                                                        title:
+                                                            Text(dayList[index].name),
+                                                        children: <Widget>[
+                                                          // workoutData
+                  
+                                                          StreamBuilder<
+                                                              List<WorkoutData>>(
+                                                            stream:
+                                                                getWorkouts(dayId),
+                                                            builder: (BuildContext
+                                                                    context,
+                                                                AsyncSnapshot<
                                                                         List<
-                                                                            SetsData>>(
-                                                                      stream: getSetsForWorkout(
-                                                                          workoutId),
-                                                                      builder: (BuildContext
-                                                                              context,
-                                                                          AsyncSnapshot<List<SetsData>>
-                                                                              snapshot) {
-                                                                        if (snapshot
-                                                                            .hasError) {
-                                                                          return Text(
-                                                                              'Error: ${snapshot.error}');
-                                                                        } else if (snapshot.connectionState ==
-                                                                            ConnectionState.waiting) {
-                                                                          return CircularProgressIndicator();
-                                                                        } else {
-                                                                          final setsList =
-                                                                              snapshot.data ?? [];
-
-                                                                          return ListView
-                                                                              .builder(
-                                                                            shrinkWrap:
-                                                                                true,
-                                                                            physics:
-                                                                                NeverScrollableScrollPhysics(),
-                                                                            itemCount:
-                                                                                setsList.length,
-                                                                            itemBuilder:
-                                                                                (context, index) {
-                                                                              return ListTile(
-                                                                                  title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                                                                Text("Reps: ${setsList[index].reps}"),
-                                                                                Text("Load: ${setsList[index].load}"),
-                                                                                Text("Intensity: ${setsList[index].intensity}")
-                                                                              ]));
+                                                                            WorkoutData>>
+                                                                    snapshot) {
+                                                              if (snapshot.hasError) {
+                                                                print(
+                                                                    'Error in getWorkouts: ${snapshot.error}');
+                                                                return Text(
+                                                                    'Error: ${snapshot.error}');
+                                                              } else if (snapshot
+                                                                      .connectionState ==
+                                                                  ConnectionState
+                                                                      .waiting) {
+                                                                return CircularProgressIndicator();
+                                                              } else {
+                                                                final workoutList =
+                                                                    snapshot.data ??
+                                                                        [];
+                  
+                                                                return ListView
+                                                                    .builder(
+                                                                  shrinkWrap: true,
+                                                                  physics:
+                                                                      NeverScrollableScrollPhysics(),
+                                                                  itemCount:
+                                                                      workoutList
+                                                                          .length,
+                                                                  itemBuilder:
+                                                                      (context,
+                                                                          index) {
+                                                                    final workoutId =
+                                                                        workoutList[
+                                                                                index]
+                                                                            .id;
+                  
+                                                                    return Padding(
+                                                                      padding:
+                                                                          const EdgeInsets
+                                                                                  .all(
+                                                                              8.0),
+                                                                      child:
+                                                                          ExpansionTile(
+                                                                        backgroundColor:
+                                                                            Color.fromARGB(
+                                                                                255,
+                                                                                41,
+                                                                                41,
+                                                                                41),
+                                                                        title: Text(
+                                                                            workoutList[index]
+                                                                                    .exerciseName ??
+                                                                                ''),
+                                                                        children: <Widget>[
+                                                                          StreamBuilder<
+                                                                              List<
+                                                                                  SetsData>>(
+                                                                            stream: getSetsForWorkout(
+                                                                                workoutId),
+                                                                            builder: (BuildContext
+                                                                                    context,
+                                                                                AsyncSnapshot<List<SetsData>>
+                                                                                    snapshot) {
+                                                                              if (snapshot
+                                                                                  .hasError) {
+                                                                                return Text(
+                                                                                    'Error: ${snapshot.error}');
+                                                                              } else if (snapshot.connectionState ==
+                                                                                  ConnectionState.waiting) {
+                                                                                return CircularProgressIndicator();
+                                                                              } else {
+                                                                                final setsList =
+                                                                                    snapshot.data ?? [];
+                  
+                                                                                return ListView
+                                                                                    .builder(
+                                                                                  shrinkWrap:
+                                                                                      true,
+                                                                                  physics:
+                                                                                      NeverScrollableScrollPhysics(),
+                                                                                  itemCount:
+                                                                                      setsList.length,
+                                                                                  itemBuilder:
+                                                                                      (context, index) {
+                                                                                    return ListTile(
+                                                                                        title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                                                      Text("Reps: ${setsList[index].reps}"),
+                                                                                      Text("Load: ${setsList[index].load}"),
+                                                                                      Text("Intensity: ${setsList[index].intensity}")
+                                                                                    ]));
+                                                                                  },
+                                                                                );
+                                                                              }
                                                                             },
-                                                                          );
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              }
                                                             },
-                                                          );
-                                                        }
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                }
                                               },
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  );
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
-                              );
-                            }
-                          },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -476,6 +504,9 @@ class SetsData {
   final String load;
   final String intensity;
   final String notes;
+  final String RPE;
+  final String actualLoad;
+  final String link;
 
   SetsData({
     required this.id,
@@ -483,6 +514,9 @@ class SetsData {
     required this.load,
     required this.intensity,
     required this.notes,
+    required this.RPE,
+    required this.actualLoad,
+    required this.link,
   });
 
   factory SetsData.fromJson(Map<String, dynamic> json) {
@@ -492,6 +526,9 @@ class SetsData {
       load: json['load'] ?? '',
       intensity: json['intensity'] ?? '',
       notes: json['notes'] ?? '',
+      RPE: json['RPE'] ?? '',
+      actualLoad: json['actualLoad'] ?? '',
+      link: json['link'] ?? '',
     );
   }
 
@@ -502,6 +539,10 @@ class SetsData {
       'load': load,
       'intensity': intensity,
       'notes': notes,
+      'RPE': RPE,
+      'actualLoad': actualLoad,
+      'link': link,
     };
   }
 }
+
