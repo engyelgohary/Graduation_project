@@ -136,22 +136,7 @@ class _CameraState extends State<Camera> {
           maxLines: 2,
         ),
         titleSpacing: -13,
-        actions: [
-          ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/progressPhoto');
-              },
-              style: ElevatedButton.styleFrom(
-                  minimumSize: Size(100, 60),
-                  primary: Colors.black,
-                  padding: EdgeInsets.all(15),
-                  alignment: Alignment.centerLeft),
-              icon: Icon(Icons.history_sharp, color: Color(0xff45B39D)),
-              label: Text(
-                'Photo History',
-                style: TextStyle(color: Color(0xff45B39D)),
-              ))
-        ],
+        
       ),
   body: Center(
         child: Column(

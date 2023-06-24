@@ -18,7 +18,7 @@ class MainPageState extends State<MainPage> {
   User? _user;
   List pages = [
     Calender_page(),
-    DetailsScreen(),
+    ProgramView(),
     Reports(),
     Profile_page(),
   ];

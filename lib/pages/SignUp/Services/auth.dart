@@ -75,6 +75,7 @@ Future<String?> checkVerificationCodeAndUpdate(
     Map<String, dynamic> dataToKeep = {
       'coachId': oldData['coachId'],
       'randomCode': oldData['randomCode'],
+      'id' : uid,
       // include new fields
       'email': email,
       'firstName': firstName,

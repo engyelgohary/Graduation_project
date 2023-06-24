@@ -1,529 +1,507 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_web_browser/flutter_web_browser.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../models/Day.dart';
-import '../../models/Program.dart';
-import '../../models/Workout.dart';
-import '../../models/block.dart';
-import '../../models/set.dart';
+import 'package:provider/provider.dart';
+import '../SignUp/Services/atlhetemodel.dart';
 
-openBrowserTab(String link) async {
-  if (link == "") {
-    Fluttertoast.showToast(msg: "No Link Found");
-  } else {
-    await FlutterWebBrowser.openWebPage(
-      customTabsOptions:
-          const CustomTabsOptions(colorScheme: CustomTabsColorScheme.dark),
-      url: link,
-    );
-  }
-}
 
-Future<List<Workout>> getWorkout() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
-    log(user!.uid);
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance
-            .collection('workout')
-            // .doc("f7f9c0a0-10b1-11ee-a2a8-23b6abbced55")
-            .get();
-    List<Workout> workout = snapshot.docs
-        .map((e) => Workout.fromJson(e.data()))
-        .where((element) => element.athleteId == user.uid)
-        .toList();
-    if (workout != null || workout.isNotEmpty) {
-      return workout;
-    } else {
-      return [];
-    }
-  } catch (e) {
-    print('Error get document: ${e.toString()}');
-    return [];
-  }
-}
+class ProgramView extends StatefulWidget {
+  final String? coachId;
+  String? selectedAthlete;
 
-Future<List<SetExersice>> getSet() async {
-  try {
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('sets').get();
-    return snapshot.docs.map((e) => SetExersice.fromJson(e.data())).toList();
-  } catch (e) {
-    print('Error get document: ${e.toString()}');
-    return [];
-  }
-}
-
-Future<List<Program>> getProgram() async {
-  try {
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('program').get();
-    return snapshot.docs.map((e) => Program.fromJson(e.data())).toList();
-  } catch (e) {
-    print('Error get document: ${e.toString()}');
-    return [];
-  }
-}
-
-Future<List<Day>> getDay() async {
-  try {
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('day').get();
-    return snapshot.docs.map((e) => Day.fromJson(e.data())).toList();
-  } catch (e) {
-    print('Error get document: ${e.toString()}');
-    return [];
-  }
-}
-
-Future<List<Block>> getBlock() async {
-  try {
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('block').get();
-    return snapshot.docs.map((e) => Block.fromJson(e.data())).toList();
-  } catch (e) {
-    print('Error get document: ${e.toString()}');
-    return [];
-  }
-}
-
-class DetailsScreen extends StatefulWidget {
-  const DetailsScreen({super.key});
+  ProgramView({this.coachId, });
 
   @override
-  State<DetailsScreen> createState() => _DetailsScreenState();
+  _ProgramViewState createState() => _ProgramViewState ();
 }
 
-class _DetailsScreenState extends State<DetailsScreen> {
-  List<bool> isEdit = [];
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController linkController = TextEditingController();
-  TextEditingController rpeController = TextEditingController();
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  late List<Workout> workout;
-  late List<SetExersice> set;
-  late List<Day> day;
-  late List<Block> block;
-  late List<Program> program;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
+class _ProgramViewState extends State<ProgramView> {
+ 
 
-    loadData();
-  }
+  final programsCollection = FirebaseFirestore.instance.collection('program');
+  final blocksCollection = FirebaseFirestore.instance.collection('block');
+  final daysCollection = FirebaseFirestore.instance.collection('day');
+  final workoutsCollection = FirebaseFirestore.instance.collection('workout');
+  final exerciseLibraryCollection =
+      FirebaseFirestore.instance.collection('exerciseLibrary');
+  final setsCollection = FirebaseFirestore.instance.collection('sets');
 
-  Future<void> updateData({
-    required id,
-    required setId,
-    required String rpe,
-    required String reps,
-    required String link,
-    required notes,
-    required intensity,
-    required load,
-  }) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('workout')
-          .doc(id.toString())
-          .update({
-        "data": [
-          {
-            "id": setId,
-            "workoutId": id,
-            "reps": reps,
-            "notes": notes,
-            "RPE": rpe,
-            "link": link,
-            "intensity": intensity,
-            "load": load,
-            "done": true,
-          }
-        ]
-      }).then((value) {
-        loadData();
-      });
-    } catch (e) {
-      print('Error Update data: ${e.toString()}');
-    }
-  }
+  final blockNameController = TextEditingController();
+  final dayNameController = TextEditingController();
+  String? selectedExercise;
 
-  bool isLoading = false;
+  Stream<List<CardData>> getPrograms(String? coachId) {
+    final query = programsCollection.where('athleteId', isEqualTo: coachId);
 
-  Future<void> loadData() async {
-    setState(() {
-      isLoading = true;
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        var cardData = CardData.fromJson(data);
+        print(
+            'Program: ${cardData.name}'); // Print program name to the terminal
+        return cardData;
+      }).toList();
     });
-    try {
-      workout = await getWorkout();
-      // set = await getSet();
-      // day = await getDay();
-      // block = await getBlock();
-      // program = await getProgram();
-      for (var i = 0; i < workout[0].data!.length; i++) {
-        isEdit.add(false);
+  }
+
+  Stream<List<SetsData>> getSetsForWorkout(String workoutId) {
+    final query = setsCollection.where('workoutId', isEqualTo: workoutId);
+
+    return query.snapshots().map((querySnapshot) {
+      if (querySnapshot.size == 0) {
+        // No documents found, return an empty list
+        return [];
+      } else {
+        return querySnapshot.docs.map((doc) {
+          final data = doc.data();
+          var setData = SetsData.fromJson(data);
+          print('Set: ${setData.reps}');
+          return setData;
+        }).toList();
       }
-      setState(() {
-        isLoading = false;
+    });
+  }
+
+  Stream<List<BlockData>> getBlocks(String programId) {
+    final query = blocksCollection.where('programId', isEqualTo: programId);
+
+    return query.snapshots().map((querySnapshot) {
+      if (querySnapshot.size == 0) {
+        // No documents found, return an empty list
+        return [];
+      } else {
+        return querySnapshot.docs.map((doc) {
+          final data = doc.data();
+          var blockData = BlockData.fromJson(data);
+          print('Block: ${blockData.name}');
+          return blockData;
+        }).toList();
+      }
+    });
+  }
+
+  Stream<List<DayData>> getDays(String blockId) {
+    final query = daysCollection.where('blockId', isEqualTo: blockId);
+
+    return query.snapshots().map((querySnapshot) {
+      if (querySnapshot.size == 0) {
+        // No documents found, return an empty list
+        return [];
+      } else {
+        return querySnapshot.docs.map((doc) {
+          final data = doc.data();
+          var dayData = DayData.fromJson(data);
+          print('Day: ${dayData.name}');
+          return dayData;
+        }).toList();
+      }
+    });
+  }
+
+  Stream<List<WorkoutData>> getWorkouts(String dayId) {
+    final query =
+        workoutsCollection.where('dayId', isEqualTo: dayId).snapshots();
+
+    return query.asyncMap((querySnapshot) async {
+      final List<WorkoutData> workoutList =
+          []; // Declare workoutList with type <WorkoutData>
+
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data();
+        final workoutData = WorkoutData.fromJson(data);
+
+        // Fetch exercise name based on exerciseId
+        final exerciseId = workoutData.exerciseId;
+        final name = await fetchExerciseName(exerciseId);
+
+        // Update workoutData with exercise name
+        workoutData.exerciseName = name;
+
+        workoutList.add(workoutData);
+      }
+
+      // Print the list of objects with exercise names
+      print('Workout List:');
+      workoutList.forEach((workout) {
+        print('Exercise Name: ${workout.exerciseName}');
       });
-    } catch (e) {
-      print('Error loading coach name: ${e.toString()}');
+
+      return workoutList;
+    });
+  }
+
+  Future<String> fetchExerciseName(String exerciseId) async {
+    print(
+        'Fetching exercise for exerciseId: $exerciseId'); // Added for debugging
+    final docSnapshot = await exerciseLibraryCollection.doc(exerciseId).get();
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      final exerciseName = data?['name'] as String? ?? '';
+      print(exerciseName);
+      return exerciseName;
+    } else {
+      return '';
     }
   }
 
-// SetExersice set = SetExersice(
-  //   id: '2',
-  //   workoutId:
-  //       'f7f9c0a0-10b1-11ee-a2a8-23b6abbced55',
-  //   reps: '6',
-  //   intensity: '70%',
-  //   load: '75kg',
-  //   RPE: '',
-  //   done: false,
-  //   link: '',
-  //   notes:
-  //       'Work up to 75% and perform 2 sets of 6-8 @8',
-  // );
-  // await FirebaseFirestore.instance
-  //     .collection('workout')
-  //     .doc(
-  //         "f7f9c0a0-10b1-11ee-a2a8-23b6abbced55")
-  //     .update({
-  //   "data": FieldValue.arrayUnion([
-  //     {
-  //       "id": set.id,
-  //       "workoutId": set.workoutId,
-  //       "reps": set.reps,
-  //       "notes": set.notes,
-  //       "RPE": set.RPE,
-  //       "link": set.link,
-  //       "intensity": set.intensity,
-  //       "load": set.load,
-  //       "done": set.done,
-  //     }
-  //   ])
-  // });
+  Stream<List<ExerciseData>> getExercises(String? coachId) {
+    final query =
+        exerciseLibraryCollection.where('coachId', isEqualTo: coachId);
+
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        var exerciseData = ExerciseData.fromJson(data);
+        print(
+            'Exercise: ${exerciseData.name}'); // Print exercise name to the terminal
+        return exerciseData;
+      }).toList();
+    });
+  }
+
+    final user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff181818),
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Back'),
-        backgroundColor: const Color(0xff181818),
-        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        backgroundColor: Color(0xFF09b599),
       ),
-      body: isLoading == true
-          ? const Center(
-              child: CircularProgressIndicator(
-              color: Color(0xff5bc500),
-            ))
-          : Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: workout.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'No workouts added yet!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w600,
-                          ),
+      body: StreamBuilder<List<CardData>>(
+        stream: getPrograms(user!.uid),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<CardData>> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else {
+            final cardList = snapshot.data ?? [];
+
+            return ListView.builder(
+              itemCount: cardList.length + 1,
+              itemBuilder: (context, index) {
+                if (index == cardList.length) {
+                  return Card();
+                } else {
+                  final programId = cardList[index].id;
+
+                  return Card(
+                    child: ExpansionTile(
+                      collapsedBackgroundColor: Colors.black,
+                      backgroundColor: Colors.black,
+                      title: Text(cardList[index].name),
+                      children: <Widget>[
+                        StreamBuilder<List<BlockData>>(
+                          stream: getBlocks(programId),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<BlockData>> snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else {
+                              final blockList = snapshot.data ?? [];
+
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: blockList.length,
+                                itemBuilder: (context, index) {
+                                  final blockId = blockList[index].id;
+
+                                  return ExpansionTile(
+                                    backgroundColor:
+                                        Color.fromARGB(255, 111, 111, 111),
+                                    title: Text(blockList[index].name),
+                                    children: <Widget>[
+                                      // day stream
+
+                                      StreamBuilder<List<DayData>>(
+                                        stream: getDays(blockId),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<List<DayData>>
+                                                snapshot) {
+                                          if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return CircularProgressIndicator();
+                                          } else {
+                                            final dayList = snapshot.data ?? [];
+
+                                            return ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemCount: dayList.length,
+                                              itemBuilder: (context, index) {
+                                                final dayId = dayList[index].id;
+
+                                                return ExpansionTile(
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 61, 61, 61),
+                                                  title:
+                                                      Text(dayList[index].name),
+                                                  children: <Widget>[
+                                                    // workoutData
+
+                                                    StreamBuilder<
+                                                        List<WorkoutData>>(
+                                                      stream:
+                                                          getWorkouts(dayId),
+                                                      builder: (BuildContext
+                                                              context,
+                                                          AsyncSnapshot<
+                                                                  List<
+                                                                      WorkoutData>>
+                                                              snapshot) {
+                                                        if (snapshot.hasError) {
+                                                          print(
+                                                              'Error in getWorkouts: ${snapshot.error}');
+                                                          return Text(
+                                                              'Error: ${snapshot.error}');
+                                                        } else if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .waiting) {
+                                                          return CircularProgressIndicator();
+                                                        } else {
+                                                          final workoutList =
+                                                              snapshot.data ??
+                                                                  [];
+
+                                                          return ListView
+                                                              .builder(
+                                                            shrinkWrap: true,
+                                                            physics:
+                                                                NeverScrollableScrollPhysics(),
+                                                            itemCount:
+                                                                workoutList
+                                                                    .length,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    index) {
+                                                              final workoutId =
+                                                                  workoutList[
+                                                                          index]
+                                                                      .id;
+
+                                                              return Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        8.0),
+                                                                child:
+                                                                    ExpansionTile(
+                                                                  backgroundColor:
+                                                                      Color.fromARGB(
+                                                                          255,
+                                                                          41,
+                                                                          41,
+                                                                          41),
+                                                                  title: Text(
+                                                                      workoutList[index]
+                                                                              .exerciseName ??
+                                                                          ''),
+                                                                  children: <Widget>[
+                                                                    StreamBuilder<
+                                                                        List<
+                                                                            SetsData>>(
+                                                                      stream: getSetsForWorkout(
+                                                                          workoutId),
+                                                                      builder: (BuildContext
+                                                                              context,
+                                                                          AsyncSnapshot<List<SetsData>>
+                                                                              snapshot) {
+                                                                        if (snapshot
+                                                                            .hasError) {
+                                                                          return Text(
+                                                                              'Error: ${snapshot.error}');
+                                                                        } else if (snapshot.connectionState ==
+                                                                            ConnectionState.waiting) {
+                                                                          return CircularProgressIndicator();
+                                                                        } else {
+                                                                          final setsList =
+                                                                              snapshot.data ?? [];
+
+                                                                          return ListView
+                                                                              .builder(
+                                                                            shrinkWrap:
+                                                                                true,
+                                                                            physics:
+                                                                                NeverScrollableScrollPhysics(),
+                                                                            itemCount:
+                                                                                setsList.length,
+                                                                            itemBuilder:
+                                                                                (context, index) {
+                                                                              return ListTile(
+                                                                                  title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                                                Text("Reps: ${setsList[index].reps}"),
+                                                                                Text("Load: ${setsList[index].load}"),
+                                                                                Text("Intensity: ${setsList[index].intensity}")
+                                                                              ]));
+                                                                            },
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
                         ),
-                      )
-                    : ListView(
-                        children: [
-                          ListView.separated(
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return Wrap(
-                                  children: [
-                                    Text(
-                                      'Workout ${index + 1}',
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    const SizedBox(height: 15),
-                                    Container(
-                                      padding: const EdgeInsets.all(12.0),
-                                      color: const Color(0xff454545),
-                                      child: ListView.separated(
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, indexx) {
-                                            return workOutItem(
-                                                context,
-                                                index,
-                                                indexx,
-                                                workout[index].data![indexx]);
-                                          },
-                                          separatorBuilder: (context, index) =>
-                                              const Divider(
-                                                color: Color(0xff181818),
-                                                thickness: 1,
-                                                height: 50,
-                                              ),
-                                          itemCount:
-                                              workout[index].data!.length),
-                                    ),
-                                  ],
-                                );
-                              },
-                              separatorBuilder: (context, index) =>
-                                  const SizedBox(height: 15),
-                              itemCount: workout.length),
-                        ],
-                      ),
-              ),
-            ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class CardData {
+  final String id;
+  final String name;
+
+  CardData({required this.name, required this.id});
+
+  factory CardData.fromJson(Map<String, dynamic> json) {
+    return CardData(
+      id: json['id'] as String,
+      name: json['name'] as String,
+    );
+  }
+}
+
+class BlockData {
+  final String id;
+  final String name;
+
+  BlockData({required this.name, required this.id});
+
+  factory BlockData.fromJson(Map<String, dynamic> json) {
+    return BlockData(
+      id: json['id'] as String,
+      name: json['name'] as String,
+    );
+  }
+}
+
+class DayData {
+  final String id;
+  final String name;
+
+  DayData({required this.name, required this.id});
+
+  factory DayData.fromJson(Map<String, dynamic> json) {
+    return DayData(
+      id: json['id'] as String,
+      name: json['name'] as String,
+    );
+  }
+}
+
+class WorkoutData {
+  final String id;
+  final String exerciseId;
+  String? exerciseName;
+
+  WorkoutData({required this.exerciseId, required this.id, this.exerciseName});
+
+  factory WorkoutData.fromJson(Map<String, dynamic> json) {
+    return WorkoutData(
+      id: json['id'] as String,
+      exerciseId: json['exerciseId'] as String,
+    );
+  }
+}
+
+class ExerciseData {
+  final String id;
+  final String name;
+
+  ExerciseData({
+    required this.id,
+    required this.name,
+  });
+
+  factory ExerciseData.fromJson(Map<String, dynamic> json) {
+    return ExerciseData(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
     );
   }
 
-  Widget workOutItem(context, index, indexx, SetExersice model) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.chat,
-              color: Colors.deepPurple[800],
-              size: 18,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              model.notes,
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: [
-            Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xff5bc500))),
-                padding: const EdgeInsets.all(5),
-                child: const Text('A',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600))),
-            const SizedBox(width: 5),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
-              color: Colors.grey.shade700,
-              child: const Text('Squat',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600)),
-            ),
-            const Spacer(),
-            if (model.done != true)
-              GestureDetector(
-                onTap: () {
-                  if (rpeController.text.isEmpty &&
-                      linkController.text.isEmpty) {
-                    setState(() {
-                      isEdit[indexx] = !isEdit[indexx];
-                    });
-                  } else {
-                    if (_formKey.currentState!.validate()) {
-                      updateData(
-                          id: workout[index].id,
-                          rpe: rpeController.text,
-                          link: linkController.text,
-                          setId: model.id,
-                          reps: model.reps,
-                          notes: model.notes,
-                          intensity: model.intensity,
-                          load: model.load);
-                    } else {
-                      Get.snackbar('Error', 'Something went wrong !');
-                    }
-                  }
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.transparent,
-                      border: Border.all(color: const Color(0xff5bc500))),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  child: Row(
-                    children: [
-                      Text(
-                        isEdit[indexx] == false ? 'Edit' : 'Done',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(width: 5),
-                      Icon(
-                          isEdit[indexx] == false
-                              ? Icons.edit_square
-                              : Icons.done,
-                          color: Colors.white,
-                          size: 12)
-                    ],
-                  ),
-                ),
-              )
-          ],
-        ),
-        const SizedBox(
-          height: 12,
-        ),
-        Row(
-          children: [
-            customNumber(context, title: 'Sets', value: '2'),
-            customNumber(context, title: 'Reps', value: model.reps),
-            customNumber(context, title: 'RPE', value: model.RPE),
-            customNumber(context, title: 'Load', value: model.load),
-            customNumber(context, title: 'Intensty', value: model.intensity),
-            Expanded(
-              flex: 2,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width / 12,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Link',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        openBrowserTab(model.link);
-                      },
-                      child: Text(
-                        model.link,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            color: Colors.blue,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        if (model.done != true)
-          if (isEdit[indexx] == true)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text('*',
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16)),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter an RPE';
-                        }
-                        return null;
-                      },
-                      controller: rpeController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: "RPE",
-                          labelStyle:
-                              TextStyle(fontSize: 14, color: Colors.white),
-                          prefixIcon: Icon(
-                            Icons.fitness_center_sharp,
-                            color: Color(0xff5bc500),
-                            size: 18,
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xff5bc500)),
-                          ))),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      controller: linkController,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: "Link",
-                          labelStyle:
-                              TextStyle(fontSize: 14, color: Colors.white),
-                          prefixIcon: Icon(
-                            Icons.link_sharp,
-                            color: Color(0xff5bc500),
-                            size: 18,
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xff5bc500)),
-                          ))),
-                ),
-              ],
-            ),
-      ],
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
+}
+
+class SetsData {
+  final String id;
+  final String reps;
+  final String load;
+  final String intensity;
+  final String notes;
+
+  SetsData({
+    required this.id,
+    required this.reps,
+    required this.load,
+    required this.intensity,
+    required this.notes,
+  });
+
+  factory SetsData.fromJson(Map<String, dynamic> json) {
+    return SetsData(
+      id: json['id'] ?? '',
+      reps: json['reps'] ?? '',
+      load: json['load'] ?? '',
+      intensity: json['intensity'] ?? '',
+      notes: json['notes'] ?? '',
     );
   }
 
-  Widget customNumber(context, {required title, required value}) => Expanded(
-        flex: 2,
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                  color: Colors.grey.shade400,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      );
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'reps': reps,
+      'load': load,
+      'intensity': intensity,
+      'notes': notes,
+    };
+  }
 }
